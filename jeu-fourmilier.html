@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Fourmilier Anonyme : Nuit blanche</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Karla:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--nuit:#1b1033;--nuit2:#27194a;--papier:#f6ecff;--rose:#ff3d9a;--or:#ffd23f;--brume:#b9a6d9}
+*{box-sizing:border-box;margin:0}
+body{background:var(--nuit);color:var(--papier);font:18px/1.6 Karla,system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px;
+  background-image:radial-gradient(circle at 1px 1px,#ffffff12 1px,transparent 0);background-size:22px 22px}
+#jeu{position:relative;width:100%;max-width:920px}
+canvas{display:block;width:100%;height:auto;border:2px solid var(--rose);border-radius:12px;box-shadow:8px 8px 0 var(--rose);cursor:crosshair;background:#000}
+#hud{position:absolute;top:12px;left:16px;right:16px;display:flex;gap:18px;align-items:center;font-weight:700;pointer-events:none;text-shadow:0 2px 4px #000}
+#hud b{font-family:Bungee,Impact,sans-serif;font-weight:400;color:var(--or)}
+.jauge{width:110px;height:10px;border-radius:9px;border:2px solid var(--brume);overflow:hidden;background:#0008}
+.jauge i{display:block;height:100%;width:100%;background:var(--rose)}
+#msg{margin-left:auto;color:var(--brume);font-style:italic;transition:opacity .6s}
+#ecran{position:absolute;inset:0;border-radius:12px;background:#1b1033ee;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:30px}
+#ecran.cache{display:none}
+h1{font:clamp(1.8rem,5.5vw,3.4rem)/1.05 Bungee,Impact,sans-serif;color:var(--rose);text-shadow:4px 4px 0 var(--or)}
+#txt{max-width:52ch;color:var(--brume)}
+#aide{font-size:.9rem;color:var(--brume);opacity:.85}
+.btn{font:700 1rem Karla,sans-serif;background:var(--or);color:var(--nuit);border:0;border-radius:999px;padding:14px 30px;cursor:pointer;box-shadow:0 5px 0 #b8901a;transition:transform .1s,box-shadow .1s}
+.btn:hover{transform:translateY(2px);box-shadow:0 3px 0 #b8901a}
+:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+</style>
+</head>
+<body>
+<div id="jeu">
+  <canvas id="c" width="920" height="600" aria-label="Labyrinthe sombre : le fourmilier cherche cinq écrins de diamants pendant que Oslo Mignon le traque"></canvas>
+  <div id="hud"><span><b id="n">0/5</b> diamants</span><span class="jauge" title="Endurance"><i id="st"></i></span><span id="msg"></span></div>
+  <div id="ecran">
+    <h1 id="titre">Nuit blanche</h1>
+    <p id="txt">Tu es le Fourmilier Anonyme. Ce soir, tu t’es introduit dans l’immeuble d’Oslo Mignon, le gardien. Cinq écrins de diamants sont cachés dans les couloirs. Oslo Mignon ne dort jamais, et il t’a entendu entrer.</p>
+    <button class="btn" id="go" type="button">Entrer dans le noir</button>
+    <p id="aide">ZQSD ou flèches pour bouger. Souris pour orienter la lampe. Maj pour courir (l’endurance s’épuise). Ordinateur conseillé, son activé, casque déconseillé aux cardiaques : il y a des jumpscares.</p>
+  </div>
+</div>
+
+<script>
+(()=>{
+const W=23,H=15,T=40,N=5,$=i=>document.getElementById(i);
+const cv=$('c'),g=cv.getContext('2d'),dk=document.createElement('canvas');
+dk.width=W*T;dk.height=H*T;const d=dk.getContext('2d');
+const calme=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let m,p,e,items,ex,state='menu',keys={},mouse={x:0,y:0},ang=0,t=0,flick=0,nextFlick=6,stam=100,tired=false,got=0,path=[],pathT=0,beat=0,ctx,drone,shake=0,deadT=0,msgT=0,last=0;
+
+const fears=['Quelque chose a bougé derrière toi…','Tu entends des pas lents.','Une porte claque au loin.','Il sait où tu es.','Ça sent l’après-rasage d’Oslo Mignon.','Ne te retourne pas.'];
+
+/* ---------- Son ---------- */
+function A(){try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.resume)ctx.resume()}catch(_){}}
+function tone(f,dur,vol,type,f2){
+  if(!ctx)return;const o=ctx.createOscillator(),gn=ctx.createGain(),t0=ctx.currentTime;
+  o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);
+  gn.gain.setValueAtTime(vol,t0);gn.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(gn);gn.connect(ctx.destination);o.start(t0);o.stop(t0+dur);
+}
+function thump(v){tone(58,.18,v,'sine',36);setTimeout(()=>tone(52,.2,v*.8,'sine',34),210)}
+function startDrone(){
+  if(!ctx||drone)return;drone=ctx.createOscillator();const gn=ctx.createGain();
+  drone.type='sawtooth';drone.frequency.value=43;gn.gain.value=.018;drone.connect(gn);gn.connect(ctx.destination);drone.start();
+}
+function stopDrone(){if(drone){try{drone.stop()}catch(_){}drone=null}}
+function scream(){tone(300,1.2,.22,'sawtooth',900);tone(480,1.2,.12,'square',1250);tone(150,1.2,.2,'sawtooth',420)}
+
+/* ---------- Génération ---------- */
+function gen(){
+  m=Array.from({length:H},()=>Array(W).fill(1));
+  (function carve(x,y){
+    m[y][x]=0;
+    [[2,0],[-2,0],[0,2],[0,-2]].sort(()=>Math.random()-.5).forEach(([dx,dy])=>{
+      const nx=x+dx,ny=y+dy;
+      if(nx>0&&ny>0&&nx<W-1&&ny<H-1&&m[ny][nx]){m[y+dy/2][x+dx/2]=0;carve(nx,ny)}
+    });
+  })(1,1);
+  for(let i=0;i<22;i++){m[1+Math.random()*(H-2)|0][1+Math.random()*(W-2)|0]=0}
+  const cells=[];
+  for(let y=1;y<H;y+=2)for(let x=1;x<W;x+=2)
+    if(Math.hypot(x-1,y-1)>7&&!(x==W-2&&y==H-2)&&!(x==W-2&&y==1))cells.push([x,y]);
+  cells.sort(()=>Math.random()-.5);
+  items=cells.slice(0,N).map(([x,y])=>({x:x*T+T/2,y:y*T+T/2,ok:0}));
+  ex={x:(W-2)*T+T/2,y:(H-2)*T+T/2};
+  p={x:T*1.5,y:T*1.5};e={x:(W-2)*T+T/2,y:T*1.5};
+  t=0;got=0;stam=100;tired=false;path=[];pathT=0;beat=1;flick=0;nextFlick=6;shake=0;deadT=0;
+  $('n').textContent='0/'+N;
+}
+const solid=(x,y)=>{const tx=x/T|0,ty=y/T|0;return x<0||y<0||tx>=W||ty>=H||m[ty][tx]};
+const free=(x,y,r)=>!(solid(x-r,y-r)||solid(x+r,y-r)||solid(x-r,y+r)||solid(x+r,y+r));
+function mov(o,dx,dy){if(free(o.x+dx,o.y+dy,9)){o.x+=dx;o.y+=dy}}
+
+function bfs(a,b){
+  const sx=a.x/T|0,sy=a.y/T|0,gx=b.x/T|0,gy=b.y/T|0,q=[[sx,sy]],pr={};pr[sy*W+sx]=-1;
+  while(q.length){
+    const[x,y]=q.shift();if(x==gx&&y==gy)break;
+    for(const[ax,ay]of[[1,0],[-1,0],[0,1],[0,-1]]){
+      const X=x+ax,Y=y+ay,k=Y*W+X;
+      if(X>=0&&Y>=0&&X<W&&Y<H&&!m[Y][X]&&!(k in pr)){pr[k]=y*W+x;q.push([X,Y])}
+    }
+  }
+  const r=[];let k=gy*W+gx;if(!(k in pr))return r;
+  while(k!=-1){r.unshift([k%W,k/W|0]);k=pr[k]}return r;
+}
+
+/* ---------- Écrans ---------- */
+function scr(titre,txt,btn){
+  $('titre').textContent=titre;$('txt').textContent=txt;$('go').textContent=btn;
+  $('aide').style.display=state==='menu'?'':'none';$('ecran').classList.remove('cache');
+}
+function say(s){const o=$('msg');o.textContent=s;o.style.opacity=1;msgT=3.5}
+function die(){
+  if(state!=='play')return;state='dead';deadT=0;shake=calme?0:26;scream();stopDrone();
+  setTimeout(()=>scr('Attrapé','Oslo Mignon t’a retrouvé avec '+got+' diamant'+(got>1?'s':'')+' en poche. Il ne dira rien. Il ne dit jamais rien.','Réessayer'),1700);
+}
+function win(){
+  if(state!=='play')return;state='win';stopDrone();tone(520,.4,.12,'triangle',780);
+  scr('Échappé','Tu ressors dans la nuit avec tes '+N+' diamants. Derrière toi, une fenêtre s’allume. Quelqu’un te regarde partir.','Rejouer');
+}
+
+/* ---------- Boucle ---------- */
+function upd(dt){
+  t+=dt;msgT-=dt;if(msgT<0)$('msg').style.opacity=0;
+  const dx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
+  const dy=(keys.KeyS||keys.ArrowDown?1:0)-(keys.KeyW||keys.ArrowUp?1:0);
+  const mv=dx||dy,run=mv&&keys.shift&&!tired;
+  if(run){stam=Math.max(0,stam-34*dt);if(stam==0)tired=true}else{stam=Math.min(100,stam+(mv?9:20)*dt);if(tired&&stam>30)tired=false}
+  $('st').style.width=stam+'%';$('st').style.background=tired?'#7a6a9a':'var(--rose)';
+  if(mv){const l=Math.hypot(dx,dy),s=(run?165:105)*dt/l;mov(p,dx*s,0);mov(p,0,dy*s)}
+  ang=Math.atan2(mouse.y-p.y,mouse.x-p.x);
+
+  // Oslo Mignon
+  if(t>4){
+    pathT-=dt;if(pathT<=0){pathT=.3;path=bfs(e,p)}
+    const nx=path[1],tx=nx?nx[0]*T+T/2:p.x,ty=nx?nx[1]*T+T/2:p.y;
+    const a=Math.atan2(ty-e.y,tx-e.x),s=(74+13*got)*dt;
+    e.x+=Math.cos(a)*s;e.y+=Math.sin(a)*s;
+    if(Math.hypot(e.x-p.x,e.y-p.y)<20)die();
+  }
+  // Objets
+  items.forEach(it=>{if(!it.ok&&Math.hypot(it.x-p.x,it.y-p.y)<20){
+    it.ok=1;got++;$('n').textContent=got+'/'+N;tone(660,.14,.1,'triangle',990);
+    say(got==N?'La sortie est ouverte. Cours.':fears[Math.random()*fears.length|0]);}});
+  if(got==N&&Math.hypot(ex.x-p.x,ex.y-p.y)<22)win();
+
+  // Cœur
+  const dist=Math.hypot(e.x-p.x,e.y-p.y);
+  beat-=dt;if(beat<=0&&t>4){thump(Math.min(.35,.05+60/dist*.12));beat=Math.max(.38,Math.min(1.5,dist/260))}
+  // Lumière qui faiblit
+  nextFlick-=dt;if(nextFlick<=0){flick=.3;nextFlick=5+Math.random()*9;tone(90,.5,.05,'sawtooth',55)}
+  flick=Math.max(0,flick-dt);
+}
+
+function draw(){
+  if(!m)return;
+  g.save();
+  if(shake>0){g.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake=Math.max(0,shake-.4)}
+  g.fillStyle='#120a22';g.fillRect(0,0,W*T,H*T);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(m[y][x]){
+    g.fillStyle='#3a2a5c';g.fillRect(x*T,y*T,T,T);g.fillStyle='#4b3875';g.fillRect(x*T,y*T,T,6);
+  }
+  // sortie
+  g.strokeStyle=got==N?'#ffd23f':'#4b3875';g.lineWidth=4;g.beginPath();g.arc(ex.x,ex.y,14,0,7);g.stroke();
+  // objets
+  items.forEach((it,i)=>{if(!it.ok){g.save();g.translate(it.x,it.y);g.rotate(Math.sin(t*2+i)*.3);
+    g.fillStyle=i%2?'#ff3d9a':'#ffd23f';g.fillRect(-8,-8,16,16);g.fillStyle='#0004';g.beginPath();g.arc(0,0,4,0,7);g.fill();g.restore()}});
+  // Oslo Mignon
+  g.fillStyle='#d9d0e6';g.beginPath();g.ellipse(e.x,e.y+4,11,15,0,0,7);g.fill();
+  g.beginPath();g.arc(e.x,e.y-12,9,0,7);g.fill();
+  // fourmilier
+  g.fillStyle='#8a6bb0';g.beginPath();g.arc(p.x,p.y,10,0,7);g.fill();
+  g.fillStyle='#14101f';g.beginPath();g.arc(p.x,p.y,10,ang+1.2,ang+5.1);g.fill();
+  g.strokeStyle='#a88ccf';g.lineWidth=5;g.lineCap='round';g.beginPath();g.moveTo(p.x,p.y);g.lineTo(p.x+Math.cos(ang)*19,p.y+Math.sin(ang)*19);g.stroke();
+
+  // obscurité
+  d.globalCompositeOperation='source-over';d.fillStyle='rgba(4,2,10,.975)';d.fillRect(0,0,W*T,H*T);
+  d.globalCompositeOperation='destination-out';
+  let r=d.createRadialGradient(p.x,p.y,4,p.x,p.y,52);r.addColorStop(0,'rgba(0,0,0,1)');r.addColorStop(1,'rgba(0,0,0,0)');
+  d.fillStyle=r;d.beginPath();d.arc(p.x,p.y,52,0,7);d.fill();
+  const R=(flick>0?70:240);
+  d.beginPath();d.moveTo(p.x,p.y);
+  for(let i=0;i<=48;i++){
+    const a=ang-.45+.9*i/48;let l=0;
+    while(l<R&&!solid(p.x+Math.cos(a)*l,p.y+Math.sin(a)*l))l+=5;
+    d.lineTo(p.x+Math.cos(a)*l,p.y+Math.sin(a)*l);
+  }
+  d.closePath();
+  r=d.createRadialGradient(p.x,p.y,10,p.x,p.y,R);r.addColorStop(0,'rgba(0,0,0,1)');r.addColorStop(.65,'rgba(0,0,0,.75)');r.addColorStop(1,'rgba(0,0,0,0)');
+  d.fillStyle=r;d.fill();
+  g.drawImage(dk,0,0);
+
+  // yeux rouges dans le noir
+  const dist=Math.hypot(e.x-p.x,e.y-p.y);
+  if(t>4&&dist<300&&state==='play'){
+    g.fillStyle='rgba(255,23,68,'+(1-dist/300).toFixed(2)+')';
+    g.beginPath();g.arc(e.x-4,e.y-13,2.6,0,7);g.arc(e.x+4,e.y-13,2.6,0,7);g.fill();
+  }
+  // éclat des paquets
+  items.forEach(it=>{if(!it.ok){g.fillStyle='rgba(255,210,63,'+(.25+.25*Math.sin(t*3+it.x)).toFixed(2)+')';g.fillRect(it.x-2,it.y-2,4,4)}});
+
+  // jumpscare d’Oslo Mignon
+  if(state==='dead'){
+    deadT+=.016;const k=Math.min(1,deadT*3.2),rr=40+k*300,cx=W*T/2,cy=H*T/2;
+    g.fillStyle='rgba(224,0,60,'+(Math.max(0,.55-deadT*.4)).toFixed(2)+')';g.fillRect(0,0,W*T,H*T);
+    g.fillStyle='#d9d0e6';g.beginPath();g.ellipse(cx,cy,rr*.9,rr,0,0,7);g.fill();
+    g.fillStyle='#000';g.beginPath();g.ellipse(cx-rr*.35,cy-rr*.15,rr*.2,rr*.16,0,0,7);g.ellipse(cx+rr*.35,cy-rr*.15,rr*.2,rr*.16,0,0,7);g.fill();
+    g.fillStyle='#ff1744';g.beginPath();g.arc(cx-rr*.35,cy-rr*.15,rr*.08,0,7);g.arc(cx+rr*.35,cy-rr*.15,rr*.08,0,7);g.fill();
+    g.beginPath();g.ellipse(cx,cy+rr*.5,rr*.28,rr*.2*(1+k),0,0,7);g.fillStyle='#14101f';g.fill();
+  }
+  g.restore();
+}
+
+function loop(ts){
+  const dt=Math.min(.05,(ts-last)/1000||0);last=ts;
+  if(state==='play')upd(dt);
+  draw();requestAnimationFrame(loop);
+}
+
+/* ---------- Entrées ---------- */
+addEventListener('keydown',ev=>{keys[ev.code]=1;if(ev.key==='Shift')keys.shift=1;if(ev.code.startsWith('Arrow'))ev.preventDefault()});
+addEventListener('keyup',ev=>{keys[ev.code]=0;if(ev.key==='Shift')keys.shift=0});
+addEventListener('blur',()=>{keys={}});
+cv.addEventListener('mousemove',ev=>{
+  const b=cv.getBoundingClientRect();
+  mouse.x=(ev.clientX-b.left)*cv.width/b.width;mouse.y=(ev.clientY-b.top)*cv.height/b.height;
+});
+$('go').addEventListener('click',()=>{
+  A();gen();state='play';startDrone();$('ecran').classList.add('cache');$('msg').textContent='';
+  say('Trouve les 5 paquets. Oslo Mignon arrive dans quelques secondes.');
+});
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

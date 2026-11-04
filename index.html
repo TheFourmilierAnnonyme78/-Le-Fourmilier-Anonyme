@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Fourmilier Anonyme</title>
+<meta name="description" content="Le Fourmilier Anonyme : un site parodique pour apprendre la cybersécurité en s’amusant. Audit de mots de passe, défis CTF, Académie façon TryHackMe et Nuit blanche, un jeu d’horreur en 3D.">
+<meta name="theme-color" content="#1b1033">
+<meta property="og:title" content="Le Fourmilier Anonyme">
+<meta property="og:description" content="Audit, CTF, Académie de cybersécurité et un jeu d’horreur en 3D. Il n’a pas de nom. Il a un museau de 60 cm.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231b1033'/%3E%3Cpolygon points='32,8 54,26 32,56 10,26' fill='%23ff3d9a'/%3E%3Cpath d='M10 26H54M32 8L24 26L32 56L40 26Z' stroke='%23ffd23f' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Karla:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nuit:#1b1033; --nuit2:#27194a; --papier:#f6ecff;
+  --rose:#ff3d9a; --or:#ffd23f; --brume:#b9a6d9;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--nuit);color:var(--papier);
+  font:18px/1.6 Karla,system-ui,sans-serif;
+  background-image:radial-gradient(circle at 1px 1px,#ffffff12 1px,transparent 0);
+  background-size:22px 22px;
+}
+h1,h2{font-family:Bungee,Impact,sans-serif;font-weight:400;line-height:1.05;letter-spacing:.01em}
+a{color:var(--or)}
+:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+main{max-width:980px;margin:0 auto;padding:0 22px 80px;position:relative;z-index:1}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center;min-height:88vh;padding-top:30px}
+.hero h1{font-size:clamp(2.6rem,7vw,5rem);color:var(--rose);text-shadow:4px 4px 0 var(--or)}
+.hero p{max-width:46ch;margin:22px 0 28px;color:var(--brume)}
+.btn{
+  font:700 1rem Karla,sans-serif;background:var(--or);color:var(--nuit);
+  border:0;border-radius:999px;padding:14px 26px;cursor:pointer;
+  box-shadow:0 5px 0 #b8901a;transition:transform .1s,box-shadow .1s;
+}
+.btn:hover{transform:translateY(2px);box-shadow:0 3px 0 #b8901a}
+.btn:disabled{opacity:.6;cursor:wait}
+.anteater{width:100%;height:auto;filter:drop-shadow(0 18px 30px #0008)}
+.anteater .tongue{transform-origin:312px 200px;animation:lick 2.4s ease-in-out infinite}
+@keyframes lick{0%,60%,100%{transform:scaleX(.2)}75%{transform:scaleX(1)}}
+
+/* Sections */
+section{padding:70px 0 0}
+h2{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:26px;color:var(--or)}
+
+/* Terminal */
+.terminal{background:var(--nuit2);border:2px solid var(--rose);border-radius:14px;padding:22px;box-shadow:8px 8px 0 var(--rose)}
+.terminal label{display:block;font-weight:700;margin-bottom:8px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row input{
+  flex:1 1 220px;font:inherit;padding:12px 16px;border-radius:10px;
+  border:2px solid var(--brume);background:var(--nuit);color:var(--papier);
+}
+.bar{height:14px;border-radius:99px;background:var(--nuit);margin-top:20px;overflow:hidden;border:2px solid var(--brume)}
+.bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(45deg,var(--rose) 0 12px,var(--or) 12px 24px);transition:width .3s}
+.log{font:15px/1.7 ui-monospace,Menlo,Consolas,monospace;margin-top:16px;min-height:7.5em;color:var(--brume)}
+.log b{color:var(--or)}
+.verdict{margin-top:14px;font-family:Bungee,Impact,sans-serif;font-size:1.3rem;color:var(--rose)}
+
+/* Stats */
+.stats{display:flex;flex-wrap:wrap;gap:28px 56px}
+.stats div{min-width:150px}
+.stats strong{display:block;font:2.6rem Bungee,Impact,sans-serif;color:var(--rose)}
+.stats span{color:var(--brume)}
+
+/* Règles */
+ol{padding-left:1.4em;max-width:62ch}
+li{margin-bottom:14px;padding-left:6px}
+li::marker{color:var(--rose);font-weight:700}
+
+.cadre{border:2px solid var(--rose);border-radius:14px;box-shadow:8px 8px 0 var(--rose);overflow:hidden;aspect-ratio:920/600;background:#000}
+.cadre iframe{width:100%;height:100%;border:0;display:block}
+.jeu-note{margin-top:18px;color:var(--brume);font-size:.95rem}
+.nouveautes{margin-top:22px;padding:20px 22px;border:1px solid #b9a6d966;border-left:5px solid var(--or);border-radius:12px;background:#27194a99}
+.nouveautes h3{font:1.05rem Bungee;color:var(--rose);margin-bottom:10px}
+.nouveautes ul{padding-left:1.2em;color:var(--brume)}
+.nouveautes li{margin:6px 0}
+footer{margin-top:80px;padding-top:24px;border-top:2px dashed var(--brume);color:var(--brume);font-size:.95rem}
+
+/* Animations en plus */
+.sachet{position:fixed;top:-50px;z-index:0;border-radius:5px;opacity:.22;animation:chute linear infinite;pointer-events:none}
+@keyframes chute{to{transform:translateY(115vh) rotate(360deg)}}
+.anteater{animation:flotte 4s ease-in-out infinite}
+@keyframes flotte{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-14px) rotate(1deg)}}
+.anteater .queue{transform-origin:110px 200px;animation:queue 1.2s ease-in-out infinite alternate}
+@keyframes queue{from{transform:rotate(-7deg)}to{transform:rotate(9deg)}}
+.anteater .butin{transform-box:fill-box;transform-origin:50% 100%;animation:butin 2.2s ease-in-out infinite}
+@keyframes butin{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg) translateY(-4px)}}
+.hero h1{animation:glitch 6s infinite}
+@keyframes glitch{
+  0%,91%,100%{transform:none;text-shadow:4px 4px 0 var(--or)}
+  92%{transform:translate(-5px,1px) skewX(6deg);text-shadow:-6px 0 var(--or),6px 0 #3de0ff}
+  94%{transform:translate(5px,-2px) skewX(-5deg);text-shadow:6px 0 var(--or),-6px 0 #3de0ff}
+  96%{transform:translate(-2px,0);text-shadow:3px 0 var(--or),-3px 0 #3de0ff}
+}
+.hero .btn{animation:appel 2.6s ease-in-out infinite}
+@keyframes appel{0%,80%,100%{transform:none}86%{transform:rotate(-4deg) scale(1.06)}92%{transform:rotate(4deg) scale(1.06)}}
+.bar i{background-size:34px 34px;animation:bande .7s linear infinite}
+@keyframes bande{to{background-position:34px 0}}
+.log div{animation:entre .3s both}
+@keyframes entre{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.log::after{content:"\25AE";color:var(--rose);animation:clignote 1s steps(2) infinite}
+@keyframes clignote{50%{opacity:0}}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(1.5);color:var(--or)}to{transform:scale(1)}}
+.rev{opacity:0;transform:translateY(28px) rotate(-.6deg);transition:opacity .6s,transform .6s}
+.rev.vu{opacity:1;transform:none}
+.terminal.secoue{animation:secoue .35s}
+@keyframes secoue{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+
+
+/* Archives secrètes */
+#secretResult{min-height:1.5em}
+.secret-open{color:var(--cy,#3de0ff)!important;text-shadow:0 0 14px #3de0ff}
+.secret-toast{position:fixed;right:18px;bottom:18px;z-index:20;max-width:min(360px,calc(100vw - 36px));padding:16px 20px;border:2px solid var(--or);border-radius:12px;background:#12091f;color:var(--papier);box-shadow:0 0 30px #ff3d9a55;animation:pop .35s both}
+.secret-toast b{color:var(--or)}
+.hero h1.secret-open{animation:none}
+
+/* Screamer */
+.screamer{position:fixed;inset:0;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;background:#000;cursor:pointer;overflow:hidden}
+.screamer.on{display:flex;animation:flash .5s ease-out both}
+@keyframes flash{from{background:#e0003c}to{background:#000}}
+.screamer svg{width:min(130vw,820px);max-height:88vh;animation:zoom .25s cubic-bezier(.1,.9,.2,1) both,tremble .07s linear infinite}
+@keyframes zoom{from{transform:scale(.2)}to{transform:scale(1.08)}}
+@keyframes tremble{0%{margin:0 0 0 0}25%{margin:-6px 0 0 7px}50%{margin:5px 0 0 -6px}75%{margin:-4px 0 0 -5px}}
+.screamer .langue{transform-origin:300px 560px;animation:bave .25s ease-in-out infinite alternate}
+@keyframes bave{from{transform:scaleY(.85)}to{transform:scaleY(1.1)}}
+.screamer p{position:absolute;bottom:3vh;font:clamp(1.4rem,5vw,2.6rem) Bungee,Impact,sans-serif;color:var(--or);text-shadow:3px 3px 0 #e0003c}
+
+
+/* Animations : mise à jour 2 */
+.sachet{border-radius:0;clip-path:polygon(50% 0,100% 38%,50% 100%,0 38%)}
+#prog{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--rose),var(--or));z-index:30;box-shadow:0 0 10px var(--rose)}
+.ticker{overflow:hidden;white-space:nowrap;border-block:2px solid var(--rose);background:#27194acc;margin:0 -22px;padding:8px 0;font:.9rem Bungee,Impact,sans-serif;color:var(--or)}
+.ticker span{display:inline-block;padding-left:100%;animation:defile 40s linear infinite}
+@keyframes defile{to{transform:translateX(-100%)}}
+.tape{min-height:1.6em;color:var(--or);font-weight:700;margin:-14px 0 22px!important}
+.curseur{display:inline-block;width:2px;height:1.1em;background:var(--rose);margin-left:3px;vertical-align:-3px;animation:clignote 1s steps(2) infinite}
+.oeil{filter:drop-shadow(0 0 5px #ff1744);transition:transform .08s linear}
+.butin polygon{animation:brille 2.4s ease-in-out infinite}.butin polygon:last-of-type{animation-delay:-1.2s}
+@keyframes brille{50%{filter:brightness(1.7)}}
+.btn{position:relative;overflow:hidden}
+.btn::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,#fff8,transparent);transform:skewX(-20deg);transition:left .5s}
+.btn:hover::after{left:130%}
+.hero h1 .mot{display:inline-block;white-space:nowrap}.hero h1 .mot span{display:inline-block;transition:transform .25s}.hero h1 .mot span:hover{transform:translateY(-8px) rotate(-4deg);color:var(--or)}
+.terminal,.cadre{transition:transform .15s ease-out;will-change:transform}
+body.noir::after{content:"";position:fixed;inset:0;z-index:25;pointer-events:none;background:radial-gradient(circle 210px at var(--x,50vw) var(--y,50vh),transparent 0,transparent 55%,rgba(0,0,0,.95) 100%)}
+.regard{position:fixed;z-index:22;width:60px;height:18px;opacity:0;pointer-events:none;transition:opacity .7s}
+.regard.on{opacity:1}
+.regard i{position:absolute;top:0;width:18px;height:18px;border-radius:50%;background:#ff1744;box-shadow:0 0 12px 4px #ff1744aa;transition:transform .1s}
+.regard i:last-child{left:36px}.regard.cligne i{transform:scaleY(.1)}
+@media(prefers-reduced-motion:reduce){.ticker span,.curseur,.butin polygon{animation:none}.ticker span{padding-left:0}.regard{display:none}}
+
+/* Mise à jour 3 : titre, nav, CTF, glossaire */
+section{scroll-margin-top:56px}
+.hero h1{grid-column:1/-1;white-space:nowrap;text-align:center;font-size:min(5.2vw,56px);margin-bottom:6px}
+.hero{align-content:center;row-gap:10px}
+.nav{position:sticky;top:4px;z-index:20;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 14px;background:#1b1033e6;border-bottom:1px solid #b9a6d955}
+.nav a{color:var(--papier);text-decoration:none;font:.8rem Bungee,Impact,sans-serif;padding:6px 12px;border-radius:999px;border:1px solid transparent;transition:border-color .2s,color .2s}
+.nav a:hover{border-color:var(--rose);color:var(--or)}
+code,.mono{font:.92em ui-monospace,Menlo,Consolas,monospace;background:#0006;padding:1px 6px;border-radius:5px;color:var(--or)}
+.ctf-top{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.ctf-top .bar{flex:1 1 200px;margin:0}
+.ctf-top .bar i{animation:none;background:linear-gradient(90deg,var(--rose),var(--or));transition:width .5s}
+.ctf-score{font:1.1rem Bungee,Impact,sans-serif;color:var(--or)}
+.mini{background:transparent;color:var(--brume);border:1px solid var(--brume);border-radius:999px;padding:6px 14px;font:700 .8rem Karla,sans-serif;cursor:pointer}
+.defi{border:2px solid #b9a6d988;border-radius:14px;background:#27194acc;padding:18px 20px;margin:16px 0;transition:border-color .3s,box-shadow .3s}
+.defi.ok{border-color:#3dff8f;box-shadow:0 0 0 3px #3dff8f22}
+.defi-t{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.defi-t h3{font:1.05rem Bungee,Impact,sans-serif;color:var(--rose)}
+.defi-t .st{color:var(--or);letter-spacing:2px}.defi-t .pts{margin-left:auto;color:var(--brume);font-size:.9rem}
+.defi p{color:var(--brume);margin:6px 0}
+.zone{margin:12px 0;padding:12px 14px;background:#12091fcc;border:1px dashed #b9a6d977;border-radius:10px}
+.zone input,.zone textarea{font:inherit;padding:9px 12px;border-radius:8px;border:2px solid var(--brume);background:var(--nuit);color:var(--papier);max-width:100%}
+.zone .mono-b{font:14px/1.6 ui-monospace,Menlo,Consolas,monospace;word-break:break-all;color:var(--or)}
+.zone iframe{width:100%;height:230px;border:0;border-radius:8px;background:#12091f}
+.sortie{margin-top:10px;font:14px/1.6 ui-monospace,Menlo,Consolas,monospace;color:var(--papier);white-space:pre-wrap;word-break:break-word}
+.sortie.bon{color:#3dff8f}.sortie.mauvais{color:#ff6b86}
+.flagrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.flagrow input{flex:1 1 240px;font:14px ui-monospace,Menlo,Consolas,monospace;padding:10px 12px;border-radius:8px;border:2px solid var(--brume);background:var(--nuit);color:var(--papier)}
+.retour{min-height:1.4em;font-weight:700;margin-top:8px}
+.retour.bon{color:#3dff8f}.retour.mauvais{color:#ff6b86}
+.lecon{margin-top:10px;padding:10px 14px;border-left:4px solid #3dff8f;background:#0f2a1ccc;border-radius:8px;color:#d7ffe6}
+.cert{margin-top:22px;padding:22px;border:3px double var(--or);border-radius:16px;background:linear-gradient(145deg,#2a1450,#12091f);text-align:center}
+.cert h3{font:1.4rem Bungee,Impact,sans-serif;color:var(--or);margin-bottom:8px}
+.diplome{margin-top:16px;padding:26px 18px;border:6px double var(--or);border-radius:10px;background:#1b1033;font-family:Bungee,Impact,sans-serif}
+.diplome b{color:var(--rose);font-size:1.5rem;display:block;margin:10px 0}
+.diplome small{display:block;color:var(--brume);font:.85rem Karla,sans-serif;margin-top:8px}
+details{border:1px solid #b9a6d966;border-radius:12px;background:#27194a99;margin:10px 0;padding:12px 16px}
+summary{cursor:pointer;font:.95rem Bungee,Impact,sans-serif;color:var(--or)}
+details p{margin:10px 0 2px;color:var(--brume)}
+.gemme-vol{position:fixed;z-index:40;width:14px;height:14px;pointer-events:none;clip-path:polygon(50% 0,100% 38%,50% 100%,0 38%);animation:vole 1s ease-out forwards}
+@keyframes vole{to{transform:translate(var(--dx),var(--dy)) rotate(360deg);opacity:0}}
+
+/* Laboratoire d'audit */
+.modes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.mode{background:transparent;color:var(--papier);border:2px solid var(--brume);border-radius:999px;padding:8px 16px;font:700 .9rem Karla,sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
+.mode:hover{border-color:var(--or)}.mode.on{background:var(--rose);border-color:var(--rose);color:#fff}
+.terminal .opt{display:flex;gap:10px;align-items:flex-start;margin:10px 0 0;font-weight:400;color:var(--brume);font-size:.9rem;cursor:pointer}
+.terminal .opt input{margin-top:4px}
+.audit{margin-top:16px}
+.meter{height:16px;border-radius:99px;background:var(--nuit);border:2px solid var(--brume);overflow:hidden}
+.meter i{display:block;height:100%;width:0;transition:width .7s}
+.s0{background:#ff1744}.s1{background:#ff7a1a}.s2{background:#ffd23f}.s3{background:#9be564}.s4{background:#3dff8f}
+.kv{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:6px 16px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+.kv b{color:var(--or);font-weight:400}.kv span{word-break:break-all}
+.fl{list-style:none;padding:0;margin:12px 0}
+.fl li{margin:0;padding:5px 0 5px 28px;position:relative}
+.fl li::before{position:absolute;left:0;font-weight:700}
+.fl .ok::before{content:"✔";color:#3dff8f}.fl .warn::before{content:"!";color:#ffd23f;left:7px}.fl .bad::before{content:"✖";color:#ff6b86}
+.conseil{margin-top:10px;padding:10px 14px;border-left:4px solid var(--or);background:#2a2308aa;border-radius:8px;color:#fff3c4;font-size:.95rem}
+@media(max-width:760px){.hero h1{font-size:min(5.2vw,56px)}}
+@media(prefers-reduced-motion:reduce){.gemme-vol{display:none}}
+@media(max-width:760px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:40px}
+}
+@media(prefers-reduced-motion:reduce){
+  .sachet,.anteater,.anteater .queue,.anteater .butin,.hero h1,.hero .btn,.bar i,.log div,.log::after,.pop,.terminal.secoue,.screamer.on,.screamer svg,.screamer .langue{animation:none}
+  .rev{opacity:1;transform:none;transition:none}
+  .anteater .tongue{animation:none;transform:scaleX(.8)}
+  .bar i{transition:none}
+}
+/* Académie */
+.ac-prof{display:grid;grid-template-columns:auto 1fr;gap:14px 22px;align-items:center;padding:18px 20px;border:2px solid var(--or);border-radius:16px;background:linear-gradient(140deg,#2a1450,#12091f);box-shadow:6px 6px 0 #b8901a;margin:18px 0}
+.ac-ava{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:2.2rem;background:#12091f;border:3px solid var(--rose)}
+.ac-id input{font:700 1.05rem Karla,sans-serif;background:transparent;border:0;border-bottom:2px dashed var(--brume);color:var(--papier);padding:2px 0;width:min(260px,100%)}
+.ac-rang{font:1rem Bungee,Impact,sans-serif;color:var(--rose);margin-top:4px}
+.ac-pts{color:var(--brume);font-size:.95rem}.ac-pts b{color:var(--or);font-family:Bungee,Impact,sans-serif}
+.ac-prof .bar{grid-column:1/-1;margin:0}.ac-prof .bar i{animation:none;background:linear-gradient(90deg,var(--rose),var(--or));transition:width .6s}
+.ac-badges{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
+.ac-badge{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:1px solid var(--or);background:#ffd23f1a;font-size:.82rem;color:var(--papier)}
+.ac-badge.off{border-color:#b9a6d944;background:transparent;color:#b9a6d988;filter:grayscale(1)}
+.ac-filtres{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.ac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.ac-card{position:relative;text-align:left;font:inherit;color:var(--papier);background:#27194acc;border:2px solid #b9a6d966;border-radius:14px;padding:16px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.ac-card:hover,.ac-card.on{transform:translateY(-3px);border-color:var(--rose);box-shadow:5px 5px 0 var(--rose)}
+.ac-card .ic{font-size:1.9rem}.ac-card h3{font:1rem Bungee,Impact,sans-serif;color:var(--or);margin:6px 0 4px}
+.ac-card p{font-size:.85rem;color:var(--brume);margin:0}
+.ac-lvl{display:inline-block;margin-top:10px;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:999px}
+.l1{background:#3dff8f22;color:#3dff8f}.l2{background:#ffd23f22;color:var(--or)}.l3{background:#ff3d9a22;color:#ff7ab8}
+.ac-prog{position:absolute;right:12px;top:12px;font:.75rem Bungee,Impact,sans-serif;color:var(--brume)}
+.ac-card.fini{border-color:#3dff8f}.ac-card.fini .ac-prog{color:#3dff8f}
+.ac-room{margin:22px 0;padding:22px;border:2px solid var(--rose);border-radius:16px;background:#1b1033f2;box-shadow:8px 8px 0 var(--rose)}
+.ac-room h3{font:1.4rem Bungee,Impact,sans-serif;color:var(--rose);margin-bottom:8px}
+.ac-room .lecon{margin:12px 0}
+.ac-room h4{font:.95rem Bungee,Impact,sans-serif;color:var(--or);margin:18px 0 8px}
+.tache{margin:12px 0;padding:12px 14px;border:1px solid #b9a6d955;border-radius:10px;background:#27194a99}
+.tache.ok{border-color:#3dff8f;background:#0f2a1c99}
+.tache .q{font-weight:700;margin-bottom:8px}.tache .q small{color:var(--brume);font-weight:400}
+.tache label.opt{display:flex;gap:8px;align-items:flex-start;margin:4px 0;color:var(--brume);cursor:pointer}
+.tache .indice{margin-top:8px;padding:8px 12px;border-left:4px solid var(--or);background:#2a2308aa;border-radius:8px;color:#fff3c4;font-size:.92rem}
+.ac-term{background:#07040d;border:1px solid #3dff8f55;border-radius:10px;padding:12px;font:14px/1.55 ui-monospace,Menlo,Consolas,monospace;color:#c8ffd9;height:280px;overflow:auto;cursor:text}
+.ac-term .pr{color:#3dff8f}.ac-term .er{color:#ff6b86}.ac-term .dir{color:#7ab8ff}
+.ac-term-in{display:flex;gap:8px;align-items:center;margin-top:8px;font:14px ui-monospace,Menlo,Consolas,monospace;color:#3dff8f}
+.ac-term-in input{flex:1;font:14px ui-monospace,Menlo,Consolas,monospace;background:#07040d;color:#c8ffd9;border:1px solid #3dff8f55;border-radius:8px;padding:8px 10px}
+.ac-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.ac-tool{padding:12px;border:1px dashed #b9a6d977;border-radius:10px;background:#12091fcc}
+.ac-tool b{display:block;color:var(--or);font-size:.9rem;margin-bottom:6px}
+.ac-tool input,.ac-tool textarea,.ac-room .flt{width:100%;font:14px ui-monospace,Menlo,Consolas,monospace;padding:8px 10px;border-radius:8px;border:2px solid var(--brume);background:var(--nuit);color:var(--papier)}
+.ac-tool .out,.ac-out{margin-top:8px;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;color:#c8ffd9;word-break:break-all;white-space:pre-wrap}
+.ac-tool .row2{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.ac-pre{max-height:300px;overflow:auto;background:#07040d;border:1px solid #b9a6d944;border-radius:10px;padding:10px 12px;font:12.5px/1.6 ui-monospace,Menlo,Consolas,monospace;color:#d8cdf0;white-space:pre;margin:0}
+.ac-pre mark{background:#ffd23f44;color:#fff}
+.mail{border:1px solid #b9a6d955;border-radius:12px;background:#f6ecff;color:#1b1033;margin:12px 0;overflow:hidden}
+.mail-h{padding:10px 14px;background:#e6dcf5;font-size:.88rem}.mail-h b{color:#1b1033}
+.mail-b{padding:12px 14px;font-size:.95rem}.mail-b a{color:#2a5bd7;text-decoration:underline;cursor:help}
+.mail-f{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:#27194a;color:var(--papier)}
+.mail-f .exp{flex:1 1 100%;font-size:.88rem;color:var(--brume)}
+.mail.bon .mail-f{background:#0f2a1c}.mail.faux .mail-f{background:#3a0f1c}
+.ac-url{font:12px ui-monospace,Menlo,Consolas,monospace;color:var(--or);min-height:1.5em;margin-top:4px}
+.ac-net{width:100%;height:auto;background:#12091f;border-radius:12px;border:1px solid #b9a6d944}
+.ac-steg{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.ac-steg canvas{width:min(480px,100%);height:auto;border-radius:10px;border:1px solid #b9a6d966;image-rendering:pixelated;background:#000}
+.ac-hebdo{margin:24px 0;padding:18px 20px;border:2px dashed var(--or);border-radius:16px;background:#2a230833}
+.ac-hebdo h3{font:1.1rem Bungee,Impact,sans-serif;color:var(--or);margin-bottom:6px}
+.ac-cd{font:1.3rem Bungee,Impact,sans-serif;color:var(--rose)}
+.ac-memo{margin:20px 0;padding:18px 20px;border:2px solid #3dff8f;border-radius:16px;background:#0f2a1c99}
+.ac-memo h3{font:1.1rem Bungee,Impact,sans-serif;color:#3dff8f;margin-bottom:8px}
+.ac-memo.verrou{border-color:#b9a6d966;background:#27194a66;color:var(--brume);text-align:center}
+.ac-memo ul{padding-left:1.2em}.ac-memo li{margin:8px 0}
+.ac-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:30;padding:12px 20px;border-radius:12px;border:2px solid var(--or);background:#12091f;color:var(--papier);font-weight:700;box-shadow:0 10px 30px #000a;animation:entre .3s both}
+@media(max-width:600px){.ac-prof{grid-template-columns:1fr;text-align:center}.ac-ava{margin:0 auto}.ac-room{padding:16px}.ac-term{height:230px}}
+
+/* Mise à jour du 4 novembre */
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--or);color:var(--nuit);font-weight:700;padding:10px 16px;border-radius:10px;text-decoration:none}.skip:focus{top:10px}
+.nav a.on{border-color:var(--or);color:var(--or)}
+@media(max-width:700px){.nav{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav::-webkit-scrollbar{display:none}.nav a{flex:none}}
+@media(max-width:600px){.hero h1{text-shadow:2px 2px 0 var(--or)!important}}
+.row input{min-width:0}
+.nouveautes h3{font-family:Bungee,Impact,sans-serif}
+.nouveautes .histo{margin-top:14px;background:transparent;border-color:#b9a6d944}
+.nouveautes .histo summary{font-size:.85rem}
+.nouveautes .histo ul{margin-top:8px;font-size:.92rem}
+.dash{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.tile{position:relative;padding:16px 16px 14px;border:2px solid #b9a6d955;border-radius:14px;background:#27194acc;display:flex;flex-direction:column;gap:2px;transition:border-color .2s,transform .2s}
+.tile:hover{border-color:var(--rose);transform:translateY(-2px)}
+.tile .ti{position:absolute;right:12px;top:10px;font-size:1.4rem;opacity:.85}
+.tile strong{font:2.1rem Bungee,Impact,sans-serif;color:var(--rose);line-height:1.1}
+.tile span{color:var(--brume);font-size:.92rem}.tile b{color:var(--or);font-weight:700}
+@media(max-width:600px){.dash{grid-template-columns:1fr 1fr;gap:10px}.tile{padding:12px}.tile strong{font-size:1.6rem}.tile span{font-size:.82rem}.tile .ti{font-size:1.1rem;right:8px;top:8px}.haut{width:40px;height:40px;left:10px;bottom:10px}}
+.tile.glob{grid-column:1/-1;gap:8px}.tile.glob .bar{margin:0}.tile.glob .bar i{animation:none;background:linear-gradient(90deg,var(--rose),var(--or));transition:width .8s}.tile.glob small{color:var(--brume)}
+.cadre{position:relative}
+.poster{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:20px;background:radial-gradient(circle at 50% 28%,#3a1d5c,#0b0618 72%);color:var(--papier)}
+.poster[hidden]{display:none}
+.poster h3{font:clamp(1.8rem,6vw,3.4rem) Bungee,Impact,sans-serif;color:var(--rose);text-shadow:3px 3px 0 var(--or);margin:0}
+.poster p{max-width:46ch;color:var(--brume);margin:0}.poster .poster-k{font:.78rem Bungee,Impact,sans-serif;letter-spacing:.12em;color:var(--or)}
+.poster small{color:#b9a6d9aa;font-size:.8rem}
+.poster-yeux{display:flex;gap:26px;margin-bottom:6px}.poster-yeux i{width:22px;height:11px;border-radius:50%;background:#ff1744;box-shadow:0 0 18px #ff1744,0 0 42px #ff174488;animation:cligne 5s infinite}
+@keyframes cligne{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.cadre iframe[hidden]{display:none}
+.cadre:fullscreen{aspect-ratio:auto;width:100vw;height:100vh;border:0;border-radius:0;box-shadow:none}
+.jeu-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.jeu-bar a.mini{text-decoration:none;display:inline-block}
+@media(max-width:600px){.poster .poster-p,.poster small{display:none}.poster{gap:8px}.poster-yeux{margin-bottom:0}}
+.foot-nav{margin-bottom:10px}.foot-nav a{color:var(--brume)}.foot-nav a:hover{color:var(--or)}
+footer p{margin:6px 0}footer .ver{font-size:.82rem;opacity:.8}
+.haut{position:fixed;left:16px;bottom:16px;z-index:19;width:46px;height:46px;border-radius:50%;border:2px solid var(--or);background:#12091fe6;color:var(--or);font:700 1.2rem Karla,sans-serif;cursor:pointer;box-shadow:0 6px 18px #0008}
+.haut[hidden]{display:none}.haut:hover{background:var(--or);color:var(--nuit)}
+/* Académie : OSINT et pare-feu */
+.ac-soc{border:1px solid #b9a6d955;border-radius:14px;background:#f6ecff;color:#1b1033;overflow:hidden}
+.ac-soc-h{display:flex;gap:12px;align-items:center;padding:12px 14px;background:linear-gradient(90deg,#e6dcf5,#f6ecff)}
+.ac-soc-h small{color:#5b4a78}
+.ac-soc-av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#ff3d9a;color:#fff;font:1rem Bungee,Impact,sans-serif;flex:none}
+.ac-post{padding:10px 14px;border-top:1px solid #d8cdea}.ac-post small{color:#7a6a96}.ac-post p{margin:4px 0;color:#1b1033}.ac-post span{font-size:.8rem;color:#b01b66}
+.ac-lab{display:block;margin-top:8px;font-size:.88rem;color:var(--brume)}.ac-lab input{margin-top:4px}
+.ac-lab2{display:flex;gap:8px;align-items:center;font-size:.88rem;color:var(--brume)}
+.ac-scroll{overflow-x:auto;margin:8px 0}
+.ac-rules{width:100%;border-collapse:collapse;font:13px ui-monospace,Menlo,Consolas,monospace;min-width:460px}
+.ac-rules th{text-align:left;color:var(--or);font-weight:700;padding:6px;border-bottom:1px solid #b9a6d955}
+.ac-rules td{padding:5px 6px;border-bottom:1px solid #b9a6d922;color:var(--papier)}
+.ac-rules input,.ac-rules select,.ac-lab2 select{font:13px ui-monospace,Menlo,Consolas,monospace;background:var(--nuit);color:var(--papier);border:1px solid var(--brume);border-radius:6px;padding:4px 6px;max-width:150px}
+.ac-rules .ac-act{white-space:nowrap}.ac-rules .ac-act .mini{padding:3px 9px;margin-left:4px}
+.ac-res tr.okr td{background:#0f2a1c88}.ac-res tr.kor td{background:#3a0f1c88}
+.ac-win{margin-top:10px;padding:10px 14px;border-left:4px solid #3dff8f;background:#0f2a1ccc;border-radius:8px;color:#d7ffe6}.ac-win b{color:var(--or)}
+</style>
+</head>
+<body>
+<!-- Mot du fourmilier : FOURMI{museau_dans_le_code_source} — bravo, tu sais lire le code source. -->
+<div id="prog"></div>
+<a class="skip" href="#hack">Aller au contenu</a>
+<nav class="nav" aria-label="Navigation du site"><a href="#">Accueil</a><a href="#hack">Audit</a><a href="#chasse">Progression</a><a href="#jouer">Jeu</a><a href="#ctf">CTF</a><a href="#academie">Académie</a><a href="#glossaire">Glossaire</a></nav>
+<main>
+
+<header class="hero">
+  <h1>Le Fourmilier Anonyme</h1>
+  <div>
+    <p>Il n’a pas de nom, pas de visage, et un museau de 60 centimètres. Il entre dans vos systèmes, il repart avec vos diamants. Nous sommes légion. Enfin, lui surtout.</p>
+    <p class="tape" aria-hidden="true"><span id="typed"></span><i class="curseur"></i></p>
+    <a href="#hack"><button class="btn" type="button">Auditer ma sécurité</button></a>
+    <a href="#jouer"><button class="btn" type="button">Jouer à Nuit blanche</button></a>
+    <button class="btn" id="lumieres" type="button">Éteindre les lumières</button>
+  </div>
+
+  <svg class="anteater" viewBox="0 0 520 380" role="img" aria-label="Un fourmilier encapuchonné portant un masque de hacker">
+    <!-- queue -->
+    <path class="queue" d="M70 230 C10 190 10 90 80 70 C60 130 90 170 130 190Z" fill="#6b4f8a"/>
+    <!-- corps -->
+    <ellipse cx="190" cy="240" rx="130" ry="85" fill="#8a6bb0"/>
+    <path d="M70 215 C140 150 240 150 320 215 C260 195 140 195 70 215Z" fill="#2c2c3a"/>
+    <!-- pattes -->
+    <rect x="120" y="295" width="30" height="55" rx="14" fill="#6b4f8a"/>
+    <rect x="215" y="295" width="30" height="55" rx="14" fill="#6b4f8a"/>
+    <!-- capuche -->
+    <path d="M230 120 C260 40 360 40 380 120 L330 200 L250 200Z" fill="#14101f"/>
+    <!-- museau -->
+    <path d="M300 130 C380 150 480 190 505 205 C505 225 400 225 300 205Z" fill="#a88ccf"/>
+    <circle cx="502" cy="210" r="6" fill="#14101f"/>
+    <!-- langue -->
+    <rect class="tongue" x="312" y="196" width="190" height="7" rx="3.5" fill="var(--rose)"/>
+    <!-- masque -->
+    <path d="M262 110 Q320 85 372 110 L368 150 Q315 170 266 150Z" fill="#f6ecff"/>
+    <path d="M280 128 q16 -10 30 0 M326 128 q16 -10 30 0" stroke="#14101f" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M285 150 q35 14 72 0" stroke="#14101f" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="295" cy="138" rx="13" ry="8" fill="#14101f"/><ellipse cx="341" cy="138" rx="13" ry="8" fill="#14101f"/><g id="yeux"><circle class="oeil" cx="295" cy="138" r="6" fill="#ff1744"/><circle class="oeil" cx="341" cy="138" r="6" fill="#ff1744"/></g>
+    <g class="butin">
+    <polygon points="53,296 80,318 53,350 26,318" fill="var(--or)"/><path d="M26 318H80M53 296L44 318L53 350L62 318Z" stroke="#b8901a" stroke-width="2" fill="none"/>
+    <polygon points="108,318 133,338 108,368 83,338" fill="var(--rose)"/><path d="M83 338H133M108 318L100 338L108 368L116 338Z" stroke="#b01b66" stroke-width="2" fill="none"/>
+  </g></svg>
+</header>
+
+<div class="ticker" aria-hidden="true"><span>ALERTE ✦ des diamants ont disparu ✦ aucun témoin ✦ des traces de museau partout ✦ ne pas s’approcher du fourmilier ✦ il respire dans votre dos ✦ ALERTE ✦ des diamants ont disparu ✦ aucun témoin ✦ des traces de museau partout ✦</span></div>
+
+<section id="hack" aria-labelledby="t-hack">
+  <h2 id="t-hack">Laboratoire d’audit du Fourmilier</h2>
+  <p class="jeu-note" style="margin:-10px 0 16px">Le Fourmilier tente de pirater ta cible pour de vrai, dans ton navigateur, et te dit à quel point tu es vulnérable. Rien n’est enregistré. Teste un mot de passe, un lien reçu par message, ou décode un texte.</p>
+  <div class="terminal">
+    <div class="modes" id="modes" role="group" aria-label="Type d’audit">
+      <button class="mode on" type="button" data-m="mdp" aria-pressed="true">Mot de passe</button>
+      <button class="mode" type="button" data-m="url" aria-pressed="false">Lien suspect</button>
+      <button class="mode" type="button" data-m="outils" aria-pressed="false">Boîte à outils</button>
+    </div>
+    <label for="cible" id="cible-label">Mot de passe à tester</label>
+    <div class="row">
+      <input id="cible" type="password" placeholder="Entre un mot de passe…" autocomplete="off" spellcheck="false">
+      <button class="mini" id="voir" type="button">Afficher</button>
+      <button class="btn" id="go" type="button">Lancer l’audit</button>
+    </div>
+    <label class="opt" id="leak-opt"><input type="checkbox" id="leak" checked><span>Vérifier aussi les fuites connues (Have I Been Pwned). Seuls 5 caractères d’une empreinte du mot de passe quittent ton navigateur, jamais le mot de passe lui-même.</span></label>
+    <div class="bar" aria-hidden="true"><i id="progres"></i></div>
+    <div class="log" id="log" aria-live="polite"></div>
+    <div class="verdict" id="verdict"></div>
+    <div class="audit" id="audit" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="chasse" aria-labelledby="t-stats">
+  <h2 id="t-stats">Tableau de chasse</h2>
+  <p class="jeu-note" style="margin:-10px 0 16px">Toute ta progression sur le site, sauvegardée dans ton navigateur (rien n’est envoyé ailleurs).</p>
+  <div class="dash">
+    <div class="tile"><span class="ti" aria-hidden="true">🎯</span><strong id="n-cibles">0</strong><span>cibles auditées pendant cette visite</span></div>
+    <div class="tile"><span class="ti" aria-hidden="true">💎</span><strong id="n-diamants">0</strong><span>diamants que le labo t’aurait volés</span></div>
+    <div class="tile"><span class="ti" aria-hidden="true">🚩</span><strong id="d-ctf">0/7</strong><span>drapeaux du CTF · <b id="d-ctfs">0</b> points</span></div>
+    <div class="tile"><span class="ti" id="d-acr-i" aria-hidden="true">🥚</span><strong id="d-aca">0</strong><span>points d’Académie · <b id="d-acr">Larve</b></span></div>
+    <div class="tile"><span class="ti" aria-hidden="true">🌙</span><strong id="d-best">—</strong><span>record à Nuit blanche · <b id="d-rank">pas encore joué</b></span></div>
+    <div class="tile"><span class="ti" aria-hidden="true">🎬</span><strong id="d-ends">0/5</strong><span>fins découvertes · <b id="d-eggs">0/10</b> easter eggs</span></div>
+    <div class="tile"><span class="ti" aria-hidden="true">📄</span><strong id="d-lore">0/8</strong><span>pages du carnet · <b id="d-neuf">0/9</b> badges des Neuf</span></div>
+    <div class="tile glob"><span>Progression globale</span><div class="bar" aria-hidden="true"><i id="d-glob"></i></div><small id="d-globt">0 % du Fourmilier Anonyme exploré</small></div>
+  </div>
+</section>
+
+<section id="jouer" aria-labelledby="t-jouer">
+  <h2 id="t-jouer">Nuit blanche : le jeu</h2>
+  <div class="cadre" id="cadre-jeu">
+    <div class="poster" id="jeu-poster">
+      <div class="poster-yeux" aria-hidden="true"><i></i><i></i></div>
+      <p class="poster-k">Horreur en 3D · 4 étages · 5 fins</p>
+      <h3>Nuit blanche</h3>
+      <p class="poster-p">Oslo Mignon commence son premier service de gardien de nuit. Son père a disparu ici il y a vingt-huit ans.</p>
+      <button class="btn" id="jeu-go" type="button">▶ Lancer le jeu</button>
+      <small>Clavier et souris, ou écran tactile. Le moteur 3D se charge au lancement.</small>
+    </div>
+    <iframe id="jeu-frame" title="Nuit blanche, le jeu du Fourmilier Anonyme" allow="autoplay; fullscreen" hidden></iframe>
+  </div>
+  <div class="jeu-bar"><button class="mini" id="jeu-fs" type="button">⛶ Plein écran</button><a class="mini" href="jeu-fourmilier-ameliore.html" target="_blank" rel="noopener">Ouvrir dans un nouvel onglet</a></div>
+  <p class="jeu-note">Jeu en 3D : ZQSD, WASD ou flèches pour bouger (touches et qualité graphique réglables dans le menu « Réglages »), souris pour regarder, clic pour attaquer/tirer, E pour interagir (boutique, casiers, ventilations), R pour recharger, L pour la lampe torche, Espace pour sauter, I pour l’inventaire, G pour siffler (dès l’étage 2). Sur tablette ou téléphone : pavé à gauche, glisser pour regarder, boutons d’action à droite.</p>
+  <div class="nouveautes" aria-label="Nouveautés de la mise à jour">
+    <h3>Mise à jour du 4 novembre 2026</h3>
+    <ul>
+      <li><b>Le sifflet de Maurice</b> (touche G, dès l’étage 2) : Anonyme reconnaît ce son, se fige… puis s’éloigne. Mais il s’en souvient, l’effet faiblit, et le Colosse déteste être réveillé.</li>
+      <li><b>Les badges des Neuf</b> : les badges de l’équipe de nuit du sous-sol sont cachés dans l’immeuble, chacun avec ses derniers mots. Réunis-les tous pour découvrir un dixième badge.</li>
+      <li><b>Documents</b> dans l’inventaire pour relire les pages et les badges trouvés (gardés d’une partie à l’autre), et <b>Réessayer l’étage</b> après une mort au lieu de tout recommencer.</li>
+      <li>Un champ pour taper les <b>codes secrets</b> dans le menu pause (fini la lampe qui s’allume en tapant un code) et le jeu devient <b>jouable au tactile</b> : glisser pour regarder, boutons d’action.</li>
+      <li>Corrections : le Fourmilier ne revient plus droit sur toi juste après avoir disparu, et le site affiche maintenant ta vraie progression (record, fins, pages, badges).</li>
+    </ul>
+    <details class="histo"><summary>Historique des mises à jour (18)</summary>
+    <ul>
+      <li>Début plus doux : un temps de répit à chaque étage, l’objectif toujours affiché (la clé, puis la porte), un mini-guide en 4 bulles après l’intro… et un mur fissuré quelque part, pour ceux qui cherchent bien.</li>
+      <li>Trois fourmiliers, trois rôles : Anonyme le Chasseur ne quitte jamais l’étage, Lumière la Pâle surgit, te fixe et s’évapore, et le Colosse garde la clé à partir de l’étage 3. Leur histoire se débloque dans le nouveau Bestiaire. Boutique refaite avec une vraie roulette.</li>
+      <li>Compatibilité Firefox, Chrome et Edge : moteur 3D chargé depuis plusieurs serveurs de secours, souris mieux gérée, et un message clair s’affiche si le navigateur bloque la 3D au lieu d’un écran qui ne répond pas.</li>
+      <li>Optimisation : modèles des fourmiliers, des fourmis et des armes compactés (jusqu’à 10 fois moins d’appels de dessin), créatures cachées derrière les murs non dessinées, collisions plus rapides. Même rendu, plus de fluidité.</li>
+      <li>Nouveau lore : Oslo Mignon est le fils de Maurice Mignon, l’ancien gardien disparu en 1999. Carnet de Maurice, huit pages à trouver, le sang des couloirs qui raconte la nuit du 13 janvier… et une vérité finale : le monstre n’était peut-être pas le Fourmilier.</li>
+      <li>Lampe torche (L) avec piles : éteinte, le Chasseur ne te voit plus… mais le fourmilier pâle voit dans le noir et peut donner l’alerte.</li>
+      <li>Un vrai lore : cinématique d’introduction (le premier service de nuit d’Oslo Mignon, matricule 0007), un chapitre du carnet du gardien de 1998 entre chaque étage et une page de journal cachée à chaque étage pour reconstituer l’histoire du Fourmilier.</li>
+      <li>Le héros s’appelle désormais Oslo Mignon. Trois fourmiliers : un pâle et gentil qui fait juste peur (et laisse un diamant), le chasseur, et un Gardien qui bloque le passage. Griffes énormes, roquette qui le cloue au sol 15 s, fourmis et plantes refaites, icônes d’armes réalistes, score avec rangs et record.</li>
+      <li>Saut (Espace, l’attaque passe sur F ou clic), screamer de mort refait, intérieur des casiers réaliste avec respiration à retenir (Maj), plus de corps au sol… et quelque part dans l’immeuble, un lecteur de badge que personne n’était censé trouver.</li>
+      <li>5 fins différentes avec leur cinématique (dont une secrète), 8 easter eggs à trouver, rechargement avec chargeurs (R : pistolet 12, pompe 5, roquette 1) et animations, Fourmilier plus réaliste (toujours immense, yeux rouges) que les balles ralentissent sans l’arrêter, décors plus sanglants (traces, empreintes, inscriptions, néons qui clignotent) et armes au sol détaillées.</li>
+      <li>Armes et mains refaites en 3D détaillée (pistolet à culasse mobile, fusil à pompe, doigts articulés), tirs avec échos des couloirs, lance-roquettes ultra rare (aussi en boutique), musique de poursuite, Fourmilier à humeurs qui s’énerve à chaque étage et disparaît quand il te perd, et une cinématique de fin qui annonce la partie 2…</li>
+      <li>Le Recel : une boutique par étage où dépenser tes diamants (soins, munitions, armes, adrénaline, seconde chance) et trois jeux d’argent (machine à sous, coffre mystère, pile ou face). Casiers pour se cacher, Fourmilier imprévisible qui apparaît, observe, disparaît ou décide de te traquer, et sons entièrement refaits (tirs, pas, réverbération, son spatialisé, volume réglable).</li>
+      <li>Inventaire dans le jeu : barre d’objets en bas, panneau complet (I ou Tab), armes à ramasser et à équiper (1 à 4 ou molette), trousses de soin stockées (H ou 5), munitions, clé et diamants.</li>
+      <li>Nouveau screamer quand le Fourmilier t’attrape : il bondit, la caméra se fige sur lui, puis son visage surgit à l’écran.</li>
+      <li>La clé est cachée au hasard, souvent au fond d’un cul-de-sac, et jamais près de la porte de sortie. Un léger tintement la trahit quand on s’en approche.</li>
+      <li>Moins de fourmis, réglées par difficulté : Facile, Normal équilibré, et Cauchemar très dur mais faisable.</li>
+      <li>Le Fourmilier court un peu plus vite, y compris en Normal, mais jamais autant que toi en sprint.</li>
+      <li>Regard mutuel, contournement des meubles, course plus rapide et jeu optimisé (F3 pour voir les FPS).</li>
+    </ul>
+    </details>
+  </div>
+</section>
+
+<section id="ctf" aria-labelledby="t-ctf">
+  <h2 id="t-ctf">Défi CTF : le coffre du Fourmilier</h2>
+  <p>Le Fourmilier a verrouillé ses diamants derrière <b>7 failles</b>. Chaque défi cache un drapeau de la forme <code>FOURMI{...}</code> : trouve-le, colle-le dans la case et valide. Les indices coûtent 25 % des points du défi.</p>
+  <p class="jeu-note">Tout est simulé dans cette page : aucun vrai système n’est visé. Ces techniques ne s’utilisent <b>jamais</b> sur un site sans autorisation. Ici, tu apprends à les reconnaître pour mieux t’en protéger.</p>
+  <div class="ctf-top"><div class="ctf-score">Score <span id="ctf-score">0</span> / <span id="ctf-max">0</span></div><div class="bar" aria-hidden="true"><i id="ctf-bar"></i></div><button class="mini" id="ctf-reset" type="button">Réinitialiser</button></div>
+  <div id="ctf-list"></div>
+  <div class="cert" id="ctf-win" hidden>
+    <h3>Coffre ouvert !</h3>
+    <p>Tu as résolu les 7 défis. Score final : <b id="ctf-final">0</b>. Le Fourmilier te félicite, de loin, en respirant très fort.</p>
+    <div class="row" style="justify-content:center"><input id="ctf-name" placeholder="Ton pseudo de hacker" maxlength="24" aria-label="Pseudo"><button class="btn" id="ctf-cert" type="button">Générer mon diplôme</button></div>
+    <div class="diplome" id="ctf-diplome" hidden></div>
+  </div>
+</section>
+
+<section id="academie" aria-labelledby="t-aca">
+  <h2 id="t-aca">L’Académie du Fourmilier</h2>
+  <p>Dix salles d’entraînement pour apprendre les bases de la cybersécurité, de la plus simple à la plus coriace. Chaque salle a une petite leçon, des outils et des questions. Les bonnes réponses rapportent des points, des badges et un rang.</p>
+  <p class="jeu-note">Tout est simulé dans ta page : rien n’est envoyé sur Internet. Ces techniques s’apprennent pour se défendre, et ne s’utilisent <b>jamais</b> sans autorisation.</p>
+  <!-- Académie, salle « Inspecteur » — fragment 1/4 : FOURMI{insp -->
+  <div class="ac-prof" id="ac-prof"></div>
+  <div class="ac-filtres" role="group" aria-label="Filtrer par niveau"><button type="button" class="mode on" data-f="tous">Toutes</button><button type="button" class="mode" data-f="1">Débutant</button><button type="button" class="mode" data-f="2">Intermédiaire</button><button type="button" class="mode" data-f="3">Avancé</button></div>
+  <div class="ac-grid" id="ac-grid"></div>
+  <div id="ac-room" class="ac-room" hidden></div>
+  <div class="ac-hebdo" id="ac-hebdo"></div>
+  <div id="ac-memo"></div>
+  <div class="cert" id="ac-cert" hidden></div>
+</section>
+
+<section id="glossaire" aria-labelledby="t-glo">
+  <h2 id="t-glo">Glossaire du petit hacker</h2>
+  <details><summary>CTF (Capture The Flag)</summary><p>Un jeu de cybersécurité où l’on résout des épreuves pour trouver des « drapeaux » (des chaînes secrètes). C’est la meilleure façon de s’entraîner légalement.</p></details>
+  <details><summary>Injection SQL</summary><p>Une faille où le texte saisi par l’utilisateur est collé dans une requête de base de données et en change le sens. Parade : les requêtes préparées.</p></details>
+  <details><summary>XSS (Cross-Site Scripting)</summary><p>Une faille où une page affiche du contenu non filtré qui peut exécuter du code dans le navigateur d’un autre visiteur. Parade : échapper tout ce qui est affiché et utiliser une politique CSP.</p></details>
+  <details><summary>Base64 : chiffrement ou pas ?</summary><p>Pas du tout. C’est un simple encodage réversible par tout le monde. Il sert à transporter des données, pas à les protéger.</p></details>
+  <details><summary>Empreinte (hash)</summary><p>Une signature à sens unique d’un texte. Ce site vérifie tes drapeaux avec des empreintes : il n’a pas besoin de connaître la réponse en clair pour dire si tu as juste.</p></details>
+  <details><summary>Entropie d’un mot de passe</summary><p>Une mesure (en bits) du nombre d’essais qu’il faudrait pour le deviner. Chaque bit double le travail de l’attaquant. Un mot courant ou une suite de touches vaut très peu, même avec un chiffre à la fin.</p></details>
+  <details><summary>Phishing (hameçonnage)</summary><p>Un faux message ou faux site qui imite une marque pour te voler tes identifiants. Signes classiques : adresse bizarre, urgence, fautes, lien qui ne mène pas au vrai domaine.</p></details>
+  <details><summary>k-anonymat (Have I Been Pwned)</summary><p>Pour vérifier un mot de passe sans le révéler, on n’envoie que les 5 premiers caractères de son empreinte SHA-1. Le service renvoie toutes les correspondances et c’est ton navigateur qui compare.</p></details>
+  <details><summary>Confiance côté client</summary><p>Tout ce qui s’exécute dans ton navigateur peut être modifié par toi. Les vraies vérifications (droits, prix, rôles) doivent se faire sur le serveur.</p></details>
+</section>
+
+<section aria-labelledby="t-regles">
+  <h2 id="t-regles">Le code du fourmilier</h2>
+  <ol>
+    <li>Le fourmilier n’a pas de nom. Si vous en avez un en tête, c’est faux.</li>
+    <li>On ne touche jamais aux diamants déjà sertis. Il y a une éthique.</li>
+    <li>Les fourmis sont mangées dans le calme, jamais pendant une intrusion.</li>
+    <li>Le museau passe partout. Les pare-feux ne sont que des suggestions.</li>
+    <li>Chaque vol est signé d’un langage de 60 cm, très lent, très humide.</li>
+  </ol>
+</section>
+
+<footer>
+  <nav class="foot-nav" aria-label="Plan du site"><a href="#hack">Audit</a> · <a href="#chasse">Progression</a> · <a href="#jouer">Nuit blanche</a> · <a href="#ctf">CTF</a> · <a href="#academie">Académie</a> · <a href="#glossaire">Glossaire</a></nav>
+  <p>Site parodique. Aucun système n’a été piraté, aucun fourmilier n’a été impliqué, tout est faux. Les défis CTF sont des simulations pédagogiques : ne les reproduis jamais sans autorisation.</p>
+  <p class="ver">Le Fourmilier Anonyme · version du 4 novembre 2026 · fait avec des fourmis et du JavaScript</p>
+</footer>
+<button class="haut" id="haut" type="button" aria-label="Revenir en haut" hidden>↑</button>
+
+
+</main>
+
+<div class="screamer" id="screamer" role="alert" aria-label="Le fourmilier surgit. Cliquer pour fermer.">
+  <svg viewBox="0 0 600 720" aria-hidden="true">
+    <ellipse cx="300" cy="300" rx="285" ry="295" fill="#14101f"/>
+    <path d="M110 180 Q300 70 490 180 L478 340 Q300 410 122 340Z" fill="#f6ecff"/>
+    <ellipse cx="210" cy="262" rx="66" ry="52" fill="#000"/>
+    <ellipse cx="390" cy="262" rx="66" ry="52" fill="#000"/>
+    <circle cx="210" cy="262" r="26" fill="#ff1744"/>
+    <circle cx="390" cy="262" r="26" fill="#ff1744"/>
+    <circle cx="202" cy="254" r="7" fill="#fff"/>
+    <circle cx="382" cy="254" r="7" fill="#fff"/>
+    <path d="M130 190 L272 238 M470 190 L328 238" stroke="#000" stroke-width="18" stroke-linecap="round"/>
+    <path d="M232 345 L368 345 L338 570 L262 570Z" fill="#a88ccf"/>
+    <ellipse cx="280" cy="372" rx="10" ry="16" fill="#14101f"/>
+    <ellipse cx="320" cy="372" rx="10" ry="16" fill="#14101f"/>
+    <ellipse cx="300" cy="572" rx="52" ry="30" fill="#14101f"/>
+    <rect class="langue" x="287" y="560" width="26" height="150" rx="13" fill="#ff3d9a"/>
+  </svg>
+  <p>Il a pris tes diamants.</p>
+</div>
+<script>
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function pop(el){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+
+  /* ===== Outils purs (testables) ===== */
+  function utf8(s){ return new TextEncoder().encode(s); }
+  function hex(a){ return Array.prototype.map.call(a, function(b){ return ('0' + b.toString(16)).slice(-2); }).join(''); }
+  function binStr(b){ var s = ''; for(var i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return s; }
+  function sha1(bytes){
+    var h0 = 0x67452301, h1 = 0xEFCDAB89, h2 = 0x98BADCFE, h3 = 0x10325476, h4 = 0xC3D2E1F0, l = bytes.length, nb = ((l + 8) >> 6) + 1, w = new Uint32Array(nb * 16), W = new Uint32Array(80), i, j;
+    for(i = 0; i < l; i++) w[i >> 2] |= bytes[i] << (24 - (i % 4) * 8);
+    w[l >> 2] |= 0x80 << (24 - (l % 4) * 8); w[nb * 16 - 1] = l * 8;
+    for(i = 0; i < nb * 16; i += 16){
+      for(j = 0; j < 16; j++) W[j] = w[i + j];
+      for(j = 16; j < 80; j++){ var x = W[j - 3] ^ W[j - 8] ^ W[j - 14] ^ W[j - 16]; W[j] = (x << 1) | (x >>> 31); }
+      var a = h0, b = h1, c = h2, d = h3, e = h4;
+      for(j = 0; j < 80; j++){
+        var f, k;
+        if(j < 20){ f = (b & c) | (~b & d); k = 0x5A827999; } else if(j < 40){ f = b ^ c ^ d; k = 0x6ED9EBA1; } else if(j < 60){ f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC; } else { f = b ^ c ^ d; k = 0xCA62C1D6; }
+        var t = (((a << 5) | (a >>> 27)) + f + e + k + W[j]) | 0; e = d; d = c; c = (b << 30) | (b >>> 2); b = a; a = t;
+      }
+      h0 = (h0 + a) | 0; h1 = (h1 + b) | 0; h2 = (h2 + c) | 0; h3 = (h3 + d) | 0; h4 = (h4 + e) | 0;
+    }
+    return [h0, h1, h2, h3, h4].map(function(v){ return ('00000000' + (v >>> 0).toString(16)).slice(-8); }).join('');
+  }
+  var K256 = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  function sha256(bytes){
+    var H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19], l = bytes.length, nb = ((l + 8) >> 6) + 1, w = new Uint32Array(nb * 16), W = new Uint32Array(64), i, j;
+    for(i = 0; i < l; i++) w[i >> 2] |= bytes[i] << (24 - (i % 4) * 8);
+    w[l >> 2] |= 0x80 << (24 - (l % 4) * 8); w[nb * 16 - 1] = l * 8;
+    function rr(x, n){ return (x >>> n) | (x << (32 - n)); }
+    for(i = 0; i < nb * 16; i += 16){
+      for(j = 0; j < 16; j++) W[j] = w[i + j];
+      for(j = 16; j < 64; j++){ var s0 = rr(W[j - 15], 7) ^ rr(W[j - 15], 18) ^ (W[j - 15] >>> 3), s1 = rr(W[j - 2], 17) ^ rr(W[j - 2], 19) ^ (W[j - 2] >>> 10); W[j] = (W[j - 16] + s0 + W[j - 7] + s1) | 0; }
+      var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+      for(j = 0; j < 64; j++){
+        var S1 = rr(e, 6) ^ rr(e, 11) ^ rr(e, 25), ch = (e & f) ^ (~e & g), t1 = (h + S1 + ch + K256[j] + W[j]) | 0, S0 = rr(a, 2) ^ rr(a, 13) ^ rr(a, 22), mj = (a & b) ^ (a & c) ^ (b & c), t2 = (S0 + mj) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0; H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+    }
+    return H.map(function(v){ return ('00000000' + (v >>> 0).toString(16)).slice(-8); }).join('');
+  }
+  function dur(s){
+    if(!isFinite(s) || s > 4.4e17) return 'plus que l’âge de l’univers';
+    if(s < 1) return 'instantané';
+    if(s < 60) return Math.round(s) + ' seconde' + (s >= 1.5 ? 's' : '');
+    var m = s / 60; if(m < 60) return Math.round(m) + ' minutes';
+    var h = m / 60; if(h < 24) return Math.round(h) + ' heures';
+    var d = h / 24; if(d < 365) return Math.round(d) + ' jours';
+    var y = d / 365; if(y < 1000) return Math.round(y) + (y < 1.5 ? ' an' : ' ans');
+    if(y < 1e6) return Math.round(y / 1000) + ' mille ans';
+    if(y < 1e9) return Math.round(y / 1e6) + ' millions d’années';
+    return Math.round(y / 1e9) + ' milliards d’années';
+  }
+
+  /* ---------- Audit de mot de passe ---------- */
+  var COMMUN = ['123456','password','123456789','azerty','qwerty','motdepasse','111111','abc123','soleil','doudou','marseille','azerty123','000000','iloveyou','admin','letmein','welcome','monkey','dragon','football','bonjour','chocolat','loulou','coucou','secret','master','princesse','jetaime','1234','12345','12345678','123123','azertyuiop','password1','sunshine','superman','trustno1','fourmi','fourmilier','anonymous','anonyme','kevin','diamant','changeme','test','user','root','toor','12341234','azerty1','1q2w3e4r','qwertyuiop','passw0rd','lolilol','naruto','pokemon','minecraft','fortnite','bonjour123','azerty12','soleil1','chouchou','doudou1','mamour','tigrou','nicolas','thomas','julien','camille','manon','paris','france','liverpool'];
+  var SEQS = ['azertyuiop','qsdfghjklm','wxcvbn','qwertyuiop','asdfghjkl','zxcvbnm','1234567890','abcdefghijklmnopqrstuvwxyz'];
+  function leet(t){ return t.replace(/[@4]/g, 'a').replace(/3/g, 'e').replace(/[1!|]/g, 'i').replace(/0/g, 'o').replace(/[$5]/g, 's').replace(/7/g, 't'); }
+  function analysePw(pw){
+    var L = pw.length, f = [], deduct = 0;
+    var low = /[a-z]/.test(pw), up = /[A-Z]/.test(pw), dg = /[0-9]/.test(pw), sy = /[^A-Za-z0-9]/.test(pw);
+    var pool = (low ? 26 : 0) + (up ? 26 : 0) + (dg ? 10 : 0) + (sy ? 33 : 0) || 1;
+    var bits = L * Math.log2(pool), critique = false;
+    var norm = leet(pw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')), plain = norm.replace(/[^a-z0-9]/g, '');
+    if(COMMUN.indexOf(pw.toLowerCase()) > -1 || COMMUN.indexOf(norm) > -1 || COMMUN.indexOf(plain) > -1){ critique = true; bits = Math.min(bits, 13); f.push({n:'bad', t:'C’est l’un des mots de passe les plus utilisés : il tombe en quelques secondes, même avec un chiffre ou un symbole à la place d’une lettre.'}); }
+    else { COMMUN.forEach(function(w){ if(w.length >= 4 && norm.indexOf(w) > -1 && !critique){ deduct += w.length * Math.log2(pool) * .85; f.push({n:'bad', t:'Contient « ' + w + ' », un mot très courant que les attaquants testent en premier.'}); critique = 'mot'; } }); }
+    var low2 = pw.toLowerCase();
+    for(var q = 0; q < SEQS.length; q++){ var sq = SEQS[q], rv = sq.split('').reverse().join(''), hit = false;
+      for(var k = 0; k + 4 <= sq.length && !hit; k++){ var part = sq.substr(k, 4); if(low2.indexOf(part) > -1 || low2.indexOf(part.split('').reverse().join('')) > -1) hit = true; }
+      if(hit){ deduct += Math.min(bits * .3, 14); f.push({n:'bad', t:'Suite de touches ou de chiffres prévisible (clavier ou alphabet).'}); break; } }
+    var uniq = new Set(pw.split('')).size;
+    if(L > 3 && uniq < L * .5){ deduct += Math.min(bits * .25, 10); f.push({n:'warn', t:'Beaucoup de caractères répétés (' + uniq + ' différents sur ' + L + ').'}); }
+    if(/(.{2,})\1/.test(pw)){ deduct += 6; f.push({n:'warn', t:'Motif répété (ex. abab, 1212).'}); }
+    if(/(19|20)\d{2}/.test(pw)){ deduct += 6; f.push({n:'warn', t:'Contient une année : très courant (naissance, date).'}); }
+    if(/^[0-9]+$/.test(pw)){ f.push({n:'bad', t:'Uniquement des chiffres : peu de combinaisons possibles.'}); }
+    if(/^[A-Za-zÀ-ÿ]+$/.test(pw) && !(up && low && (pw.match(/[A-Z]/g) || []).length > L * .3)){ bits = Math.min(bits, L * 2.6); f.push({n:'warn', t:'Ressemble à du texte lisible : les mots se devinent plus vite qu’une suite aléatoire.'}); }
+    var core = pw.replace(/[^A-Za-z]+$/, ''), suffixe = pw.length - core.length, coreL = leet(core.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+    if(core.length >= 5 && /^[a-z]+$/.test(coreL) && !/^[A-Za-z]+$/.test(pw)){
+      var vow = (coreL.match(/[aeiouy]/g) || []).length / coreL.length;
+      if(vow >= .28 && vow <= .65){ var subs = (core.match(/[^A-Za-z]/g) || []).length, est = coreL.length * 2.2 + subs * 1.8 + (/[A-Z]/.test(core) ? 1 : 0) + suffixe * 4; if(est < bits){ bits = est; f.push({n:'bad', t:'Ressemble à un mot courant avec quelques substitutions (0 pour o, 4 pour a…) et un suffixe : les attaquants testent exactement ce genre de variantes.'}); } }
+    }
+    var mots = pw.split(/[\s\-_.]+/).filter(function(x){ return x.length > 2; });
+    if(mots.length >= 4 && /^[A-Za-zÀ-ÿ'’\s\-_.]+$/.test(pw)){ bits = mots.length * 11.5; deduct = 0; f.push({n:'ok', t:'Phrase de passe de ' + mots.length + ' mots : bonne méthode (plus il y a de mots aléatoires, mieux c’est).'}); }
+    if(L < 8) f.push({n:'bad', t:'Trop court : ' + L + ' caractère' + (L > 1 ? 's' : '') + '. Vise au moins 12.'}); else if(L >= 14) f.push({n:'ok', t:'Bonne longueur (' + L + ' caractères) : c’est le facteur qui compte le plus.'}); else if(L >= 12) f.push({n:'ok', t:'Longueur correcte (' + L + ' caractères).'});
+    var classes = [low, up, dg, sy].filter(Boolean).length;
+    if(classes >= 3 && !critique) f.push({n:'ok', t:'Mélange varié : minuscules, majuscules, chiffres ou symboles.'}); else if(classes <= 1 && L >= 1) f.push({n:'warn', t:'Un seul type de caractères : ajoute de la variété ou, mieux, de la longueur.'});
+    var eff = Math.max(1, bits - deduct);
+    var score = eff < 28 ? 0 : eff < 36 ? 1 : eff < 60 ? 2 : eff < 80 ? 3 : 4;
+    var g = Math.pow(2, eff - 1);
+    return {len: L, bits: eff, score: score, pct: Math.min(100, Math.round(eff / 100 * 100)), online: g / 100, offline: g / 1e10, f: f};
+  }
+  function fuite(pw){
+    var h = sha1(utf8(pw)).toUpperCase(), pre = h.slice(0, 5), suf = h.slice(5);
+    return fetch('https://api.pwnedpasswords.com/range/' + pre).then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function(t){ var n = 0; t.split('\n').forEach(function(l){ var p = l.trim().split(':'); if(p[0] === suf) n = parseInt(p[1], 10) || 0; }); return n; });
+  }
+
+  /* ---------- Analyse de lien (heuristiques locales) ---------- */
+  var TLD_LOUCHES = ['zip','mov','xyz','top','click','tk','gq','ml','cf','ga','work','loan','country','kim','cam','rest','icu','buzz','monster','support'];
+  var COURTS = ['bit.ly','tinyurl.com','t.co','goo.gl','is.gd','cutt.ly','ow.ly','rebrand.ly','shorturl.at','tiny.cc','rb.gy'];
+  var MOTS_CLES = ['login','signin','secure','verify','verif','account','update','confirm','password','wallet','support','billing','recovery'];
+  var MARQUES = ['paypal','google','microsoft','apple','amazon','netflix','facebook','instagram','laposte','impots','ameli','orange','bnpparibas','creditagricole','societegenerale','whatsapp','linkedin','steam','discord','spotify','colissimo','chronopost'];
+  function domaineRacine(labels){ var n = labels.length; if(n <= 2) return labels.join('.'); var sld = labels[n - 2]; if(labels[n - 1].length === 2 && ['co','com','org','net','gov','gouv','ac'].indexOf(sld) > -1) return labels.slice(-3).join('.'); return labels.slice(-2).join('.'); }
+  function analyseUrl(raw){
+    var f = [], risk = 0, s = raw.trim();
+    function add(n, t, p){ f.push({n:n, t:t}); risk += p || 0; }
+    if(/^(javascript|data|vbscript):/i.test(s)) return {risk:100, f:[{n:'bad', t:'Schéma dangereux : ce « lien » exécute du code ou intègre des données au lieu d’ouvrir une vraie page.'}], parts:null};
+    var u; try{ u = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(s) ? s : 'https://' + s); }catch(e){ return {risk:0, f:[{n:'warn', t:'Adresse invalide : impossible de l’analyser.'}], parts:null, invalide:true}; }
+    var host = u.hostname.toLowerCase(), labels = host.split('.'), racine = domaineRacine(labels), tld = labels[labels.length - 1];
+    if(u.protocol === 'http:') add('warn', 'Pas de HTTPS : la connexion n’est pas chiffrée.', 10); else if(u.protocol === 'https:') add('ok', 'HTTPS actif (cela ne prouve pas que le site est honnête).', 0);
+    if(u.username || u.password) add('bad', 'Contient un identifiant avant le « @ » : astuce classique pour faire croire à un autre site.', 30);
+    if(/^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.charAt(0) === '[') add('bad', 'L’adresse est une IP brute, pas un nom de site : très inhabituel pour un vrai service.', 25);
+    if(/xn--/.test(host) || /[^\x00-\x7f]/.test(s.split('/')[2] || '')) add('bad', 'Nom de domaine avec caractères internationaux (punycode) : risque de faux site qui imite un vrai avec des lettres trompeuses.', 25);
+    if(TLD_LOUCHES.indexOf(tld) > -1) add('warn', 'Extension « .' + tld + ' » très utilisée par des sites jetables ou frauduleux.', 10);
+    if(labels.length > 4) add('warn', 'Beaucoup de sous-domaines (' + (labels.length - 2) + ') : on y cache souvent le vrai nom du faux site.', 10);
+    if((host.match(/-/g) || []).length > 2) add('warn', 'Beaucoup de tirets dans le nom de domaine.', 8);
+    if(COURTS.indexOf(host) > -1) add('warn', 'Lien raccourci : impossible de voir la vraie destination avant de cliquer.', 15);
+    var officiel = MARQUES.indexOf(racine.split('.')[0]) > -1, mk = officiel ? [] : MOTS_CLES.filter(function(w){ return host.indexOf(w) > -1; }); if(mk.length) add('warn', 'Le nom de domaine contient des mots de pression (« ' + mk.slice(0, 3).join(', ') + ' »).', Math.min(20, mk.length * 10));
+    var hostPlat = host.replace(/[.\-]/g, ''), hostFix = hostPlat.replace(/1/g, 'l').replace(/0/g, 'o').replace(/3/g, 'e').replace(/vv/g, 'w').replace(/rn/g, 'm');
+    MARQUES.forEach(function(m){
+      var legit = racine.split('.')[0] === m && labels.length <= 3 + (racine.split('.').length - 2) ;
+      if(hostPlat.indexOf(m) > -1 && racine.split('.')[0] !== m) add('bad', 'Contient « ' + m + ' » mais le vrai domaine est « ' + racine + ' » : imitation probable de la marque.', 30);
+      else if(hostFix.indexOf(m) > -1 && hostPlat.indexOf(m) === -1) add('bad', 'Imite « ' + m + ' » avec des caractères trompeurs (1 pour l, 0 pour o…).', 30);
+    });
+    if(u.port && ['80', '443'].indexOf(u.port) === -1) add('warn', 'Port inhabituel (' + u.port + ').', 8);
+    if(/[?&](url|redirect|redirect_uri|next|goto|dest|target|link|return)=(https?(:|%3a))/i.test(u.search)) add('warn', 'Contient une redirection vers une autre adresse dans les paramètres.', 12);
+    if((s.match(/%[0-9a-f]{2}/gi) || []).length > 6) add('warn', 'Beaucoup de caractères encodés (%xx) : peut masquer le vrai contenu.', 8);
+    if(/\.(pdf|docx?|xlsx?|jpe?g|png)\.(exe|scr|js|bat|cmd|vbs)(\?|$)/i.test(u.pathname)) add('bad', 'Double extension (ex. facture.pdf.exe) : un exécutable déguisé en document.', 30);
+    else if(/\.(exe|scr|bat|cmd|msi|apk|jar|vbs|ps1|iso)(\?|$)/i.test(u.pathname)) add('warn', 'Le lien télécharge un programme.', 15);
+    if(s.length > 150) add('warn', 'Adresse très longue (' + s.length + ' caractères).', 10); else if(s.length > 75) add('warn', 'Adresse assez longue.', 5);
+    if(!f.some(function(x){ return x.n === 'bad' || x.n === 'warn'; })) f.push({n:'ok', t:'Aucun signal d’alerte classique détecté.'});
+    return {risk: Math.min(100, risk), f: f, parts: {proto: u.protocol.replace(':', ''), host: host, racine: racine, path: u.pathname + (u.hash || ''), query: u.search || '(aucun)'}};
+  }
+
+  /* ---------- Boîte à outils ---------- */
+  function rot13(t){ return t.replace(/[a-z]/gi, function(c){ var b = c <= 'Z' ? 65 : 97; return String.fromCharCode((c.charCodeAt(0) - b + 13) % 26 + b); }); }
+  function lisible(t){ if(!t) return false; var bons = 0; for(var i = 0; i < t.length; i++){ var c = t.charCodeAt(i); if(c === 9 || c === 10 || c === 13 || (c >= 32 && c !== 127 && c !== 65533)) bons++; } return bons / t.length > .92; }
+  function outils(t){
+    var b = utf8(t), r = [['Longueur', t.length + ' caractères (' + b.length + ' octets)'], ['Base64', btoa(binStr(b))], ['Hexadécimal', hex(b)], ['URL-encodé', encodeURIComponent(t)], ['ROT13', rot13(t)], ['SHA-1', sha1(b)], ['SHA-256', sha256(b)]];
+    var d = [], compact = t.replace(/\s+/g, '');
+    try{ if(compact.length >= 8 && compact.length % 4 === 0 && /^[A-Za-z0-9+\/]+={0,2}$/.test(compact)){ var raw = atob(compact), by = new Uint8Array(raw.length); for(var i = 0; i < raw.length; i++) by[i] = raw.charCodeAt(i); var tx = new TextDecoder('utf-8', {fatal:true}).decode(by); if(lisible(tx)) d.push(['Décodé (Base64)', tx]); } }catch(e){}
+    try{ if(compact.length >= 4 && compact.length % 2 === 0 && /^[0-9a-f]+$/i.test(compact)){ var hb = new Uint8Array(compact.length / 2); for(var k = 0; k < hb.length; k++) hb[k] = parseInt(compact.substr(k * 2, 2), 16); var hx = new TextDecoder('utf-8', {fatal:true}).decode(hb); if(lisible(hx)) d.push(['Décodé (hexadécimal)', hx]); } }catch(e){}
+    try{ if(/%[0-9a-f]{2}/i.test(t)){ var ud = decodeURIComponent(t); if(ud !== t) d.push(['Décodé (URL)', ud]); } }catch(e){}
+    return d.concat(r);
+  }
+
+  /* ===== Interface ===== */
+  var mode = 'mdp', total = 0, vole = 0, enCours = false;
+  var CFG = {
+    mdp: {label:'Mot de passe à tester (rien n’est enregistré)', ph:'Entre un mot de passe…', type:'password', btn:'Lancer l’audit'},
+    url: {label:'Lien ou adresse de site à examiner', ph:'Ex : https://paypa1-secure-login.com/verify', type:'text', btn:'Examiner le lien'},
+    outils: {label:'Texte à analyser, encoder ou décoder', ph:'Ex : un texte, une chaîne Base64, de l’hexadécimal…', type:'text', btn:'Analyser'}
+  };
+  var input = $('cible'), go = $('go'), bar = $('progres'), log = $('log'), verdict = $('verdict'), audit = $('audit'), term = document.querySelector('#hack .terminal');
+  function setMode(m){
+    mode = m;
+    document.querySelectorAll('#modes .mode').forEach(function(b){ var on = b.dataset.m === m; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    var c = CFG[m]; $('cible-label').textContent = c.label; input.placeholder = c.ph; input.type = c.type; go.textContent = c.btn; input.value = '';
+    $('leak-opt').style.display = m === 'mdp' ? '' : 'none'; $('voir').style.display = m === 'mdp' ? '' : 'none'; $('voir').textContent = 'Afficher';
+    log.innerHTML = ''; verdict.textContent = ''; audit.innerHTML = ''; bar.style.width = '0';
+  }
+  document.querySelectorAll('#modes .mode').forEach(function(b){ b.addEventListener('click', function(){ if(!enCours) setMode(b.dataset.m); }); });
+  $('voir').addEventListener('click', function(){ var cache = input.type === 'password'; input.type = cache ? 'text' : 'password'; $('voir').textContent = cache ? 'Masquer' : 'Afficher'; });
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') go.click(); });
+  function li(x){ return '<li class="' + x.n + '">' + esc(x.t) + '</li>'; }
+  var CONSEILS = '<div class="conseil"><b>Les bons réflexes :</b> une phrase de passe d’au moins 5 ou 6 mots aléatoires (ou 14 caractères aléatoires et plus) ; un mot de passe différent par site grâce à un gestionnaire ; la double authentification partout où c’est possible.</div>';
+  function terminer(vol, nom){
+    total++; vole += vol; $('n-cibles').textContent = total; $('n-diamants').textContent = vole; pop($('n-cibles')); pop($('n-diamants'));
+    term.classList.remove('secoue'); void term.offsetWidth; term.classList.add('secoue');
+    pop(verdict); verdict.innerHTML = esc(nom); go.disabled = false; enCours = false;
+  }
+  function etapes(liste, fin){
+    var i = 0; log.innerHTML = ''; bar.style.width = '0';
+    var t = setInterval(function(){
+      if(i < liste.length){ log.innerHTML += '<div><b>[' + (i + 1) + '/' + liste.length + ']</b> ' + esc(liste[i]) + '</div>'; bar.style.width = Math.round((i + 1) / liste.length * 100) + '%'; i++; }
+      else { clearInterval(t); fin(); }
+    }, 520);
+  }
+  go.addEventListener('click', function(){
+    if(enCours) return;
+    var v = input.value;
+    if(mode !== 'outils' ? !v.trim() : !v){ verdict.textContent = 'Entre quelque chose à auditer.'; return; }
+    enCours = true; go.disabled = true; verdict.textContent = ''; audit.innerHTML = '';
+    if(mode === 'mdp'){
+      var veut = $('leak').checked, pL = veut ? fuite(v).catch(function(){ return -1; }) : null;
+      etapes(['Mesure de la longueur et de la variété des caractères…', 'Recherche dans le dictionnaire des mots de passe les plus courants…', 'Détection des suites de touches et des motifs répétés…', veut ? 'Interrogation de Have I Been Pwned (seuls 5 caractères d’une empreinte sortent de ton navigateur)…' : 'Vérification des fuites ignorée (désactivée).', 'Estimation du temps de piratage…'], function(){
+        Promise.resolve(pL).then(function(n){
+          var r = analysePw(v), noms = ['Catastrophique', 'Faible', 'Moyen', 'Solide', 'Excellent'];
+          if(n > 0){ r.f.unshift({n:'bad', t:'Ce mot de passe est apparu ' + n.toLocaleString('fr-FR') + ' fois dans des fuites de données. Il est connu des attaquants : ne l’utilise plus.'}); r.score = Math.min(r.score, 0); r.pct = Math.min(r.pct, 12); r.online = Math.min(r.online, 1); r.offline = Math.min(r.offline, 1); }
+          var h = '<div class="meter" role="img" aria-label="Solidité : ' + noms[r.score] + '"><i class="s' + r.score + '" style="width:0"></i></div>';
+          h += '<p><b>' + noms[r.score] + '</b> · environ ' + Math.round(r.bits) + ' bits d’entropie réelle · ' + r.len + ' caractère' + (r.len > 1 ? 's' : '') + '</p>';
+          h += '<div class="kv"><b>Attaque en ligne (100 essais/s)</b><span>' + dur(r.online) + '</span><b>Attaque hors ligne (10 milliards/s)</b><span>' + dur(r.offline) + '</span>';
+          if(n !== null) h += '<b>Fuites connues</b><span>' + (n < 0 ? 'vérification impossible (hors ligne ?)' : n > 0 ? 'trouvé ' + n.toLocaleString('fr-FR') + ' fois' : 'introuvable (ce n’est pas une garantie)') + '</span>';
+          h += '</div><ul class="fl">' + r.f.map(li).join('') + '</ul>' + CONSEILS;
+          audit.innerHTML = h; setTimeout(function(){ var m = audit.querySelector('.meter i'); if(m) m.style.width = Math.max(6, r.pct) + '%'; }, 40);
+          input.value = '';
+          var vol = Math.round((4 - r.score) * 7.5), nom = r.score >= 3 ? 'Le Fourmilier repart bredouille. Champ effacé.' : 'Piraté·e : ' + vol + ' diamants volés ! Champ effacé.';
+          terminer(vol, nom);
+        });
+      });
+    } else if(mode === 'url'){
+      etapes(['Décomposition de l’adresse (protocole, hôte, chemin)…', 'Recherche de caractères trompeurs et de marques imitées…', 'Examen des extensions, redirections et raccourcisseurs…', 'Calcul du niveau de risque…'], function(){
+        var r = analyseUrl(v);
+        if(r.invalide || !r.parts){ audit.innerHTML = '<ul class="fl">' + r.f.map(li).join('') + '</ul>'; terminer(r.risk ? Math.round(r.risk / 5) : 0, r.risk >= 100 ? 'Lien dangereux !' : 'Adresse non analysable.'); return; }
+        var cls = r.risk < 15 ? 's4' : r.risk < 40 ? 's2' : r.risk < 70 ? 's1' : 's0', lbl = r.risk < 15 ? 'Plutôt sain' : r.risk < 40 ? 'À vérifier' : r.risk < 70 ? 'Suspect' : 'Très suspect';
+        var h = '<div class="meter" role="img" aria-label="Niveau de risque : ' + lbl + '"><i class="' + cls + '" style="width:0"></i></div><p><b>' + lbl + '</b> · score de risque ' + r.risk + ' / 100</p>';
+        h += '<div class="kv"><b>Protocole</b><span>' + esc(r.parts.proto) + '</span><b>Hôte</b><span>' + esc(r.parts.host) + '</span><b>Domaine principal</b><span>' + esc(r.parts.racine) + '</span><b>Chemin</b><span>' + esc(r.parts.path) + '</span><b>Paramètres</b><span>' + esc(r.parts.query) + '</span></div>';
+        h += '<ul class="fl">' + r.f.map(li).join('') + '</ul><div class="conseil">Analyse heuristique faite sur ton appareil : elle repère les pièges classiques, mais un lien d’apparence propre peut rester dangereux. Dans le doute, n’ouvre pas le lien : va directement sur le site officiel en tapant son adresse.</div>';
+        audit.innerHTML = h; setTimeout(function(){ var m = audit.querySelector('.meter i'); if(m) m.style.width = Math.max(6, r.risk) + '%'; }, 40);
+        terminer(Math.round(r.risk / 5), r.risk < 15 ? 'Le Fourmilier ne mord pas à ce lien.' : 'Le Fourmilier vole ' + Math.round(r.risk / 5) + ' diamants avec ce lien !');
+      });
+    } else {
+      etapes(['Conversion du texte en octets…', 'Calcul des empreintes SHA-1 et SHA-256…', 'Recherche d’encodages courants (Base64, hexadécimal, URL)…'], function(){
+        var rows = outils(v), h = '<div class="kv">' + rows.map(function(x){ return '<b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span>'; }).join('') + '</div>';
+        audit.innerHTML = h; terminer(0, rows.length > 7 ? 'Encodage détecté et décodé !' : 'Analyse terminée.');
+      });
+    }
+  });
+  setMode('mdp');
+})();
+</script>
+<script>
+(function(){
+  var calme = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Sachets qui tombent en fond
+  if(!calme){
+    var couleurs = ['#ffd23f','#ff3d9a'];
+    for(var i = 0; i < 14; i++){
+      var d = document.createElement('div'), t = 18 + Math.random() * 18;
+      d.className = 'sachet';
+      d.style.cssText = 'left:' + (Math.random() * 100) + 'vw;width:' + t + 'px;height:' + t + 'px;background:' +
+        couleurs[i % 2] + ';animation-duration:' + (9 + Math.random() * 12) + 's;animation-delay:-' + (Math.random() * 20) + 's';
+      document.body.appendChild(d);
+    }
+  }
+
+  // Apparition des sections au scroll
+  var secs = document.querySelectorAll('section');
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('vu'); obs.unobserve(e.target); } });
+    }, {threshold:.15});
+    secs.forEach(function(s){ s.classList.add('rev'); obs.observe(s); });
+  }
+
+  // Screamer
+  var ecran = document.getElementById('screamer'), ctx = null, fait = false, tFin;
+  function audio(){
+    try{ ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); }catch(e){}
+  }
+  ['pointerdown','keydown'].forEach(function(ev){ window.addEventListener(ev, audio, {once:true}); });
+
+  function cri(){
+    audio(); if(!ctx) return;
+    var t = ctx.currentTime, g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(.28, t + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t + 1.4);
+    g.connect(ctx.destination);
+    [[320,820,'sawtooth'],[480,1250,'square'],[161,410,'sawtooth']].forEach(function(o){
+      var osc = ctx.createOscillator();
+      osc.type = o[2];
+      osc.frequency.setValueAtTime(o[0], t);
+      osc.frequency.exponentialRampToValueAtTime(o[1], t + .5);
+      osc.frequency.exponentialRampToValueAtTime(o[0] * 1.3, t + 1.4);
+      osc.connect(g); osc.start(t); osc.stop(t + 1.45);
+    });
+    var n = ctx.createBuffer(1, ctx.sampleRate * 1.4, ctx.sampleRate), b = n.getChannelData(0);
+    for(var i = 0; i < b.length; i++) b[i] = (Math.random() * 2 - 1) * .5;
+    var src = ctx.createBufferSource(); src.buffer = n; src.connect(g); src.start(t);
+  }
+
+  function ferme(){ ecran.classList.remove('on'); clearTimeout(tFin); }
+  function bouh(){
+    if(fait) return;
+    if(document.hidden){ document.addEventListener('visibilitychange', function f(){
+      if(!document.hidden){ document.removeEventListener('visibilitychange', f); setTimeout(bouh, 1500); } }); return; }
+    fait = true;
+    try{ sessionStorage.setItem('fa-scream', '1'); }catch(e){}
+    ecran.classList.add('on');
+    cri();
+    tFin = setTimeout(ferme, 2200);
+  }
+  ecran.addEventListener('click', ferme);
+  window.addEventListener('keydown', function(e){ if(e.key === 'Escape') ferme(); });
+
+  // Screamer : une seule fois par session, armé après 20 s, déclenché par un clic sur un bouton « au hasard ».
+  var partieActive = false, armed = false, restants = 1 + Math.floor(Math.random() * 4);
+  try{ if(sessionStorage.getItem('fa-scream') === '1') fait = true; }catch(e){}
+  setTimeout(function(){ armed = true; }, 20000);
+  window.addEventListener('message', function(ev){
+    if(ev.source !== (document.querySelector('#jouer iframe') || {}).contentWindow) return;
+    if(!ev.data || ev.data.type !== 'fourmilier-game-state') return;
+    partieActive = !!ev.data.active;
+    if(partieActive) ferme();
+  });
+  document.addEventListener('click', function(ev){
+    if(!armed || fait || partieActive || ecran.classList.contains('on')) return;
+    var b = ev.target.closest && ev.target.closest('button, .btn, [role="button"], summary');
+    if(!b || b.closest('#screamer')) return;
+    restants--;
+    if(restants <= 0 || Math.random() < .1) setTimeout(bouh, 80 + Math.random() * 400);
+  }, true);
+})();
+</script>
+<script>
+(function(){
+  var calme = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Barre de progression du scroll
+  var prog = document.getElementById('prog');
+  function scrollBar(){ var h = document.documentElement.scrollHeight - innerHeight; prog.style.width = (h > 0 ? scrollY / h * 100 : 0) + '%'; }
+  addEventListener('scroll', scrollBar, {passive:true}); scrollBar();
+
+  // Phrases tapées au clavier
+  var typed = document.getElementById('typed'), phrases = ['Vole des diamants.', 'Hack les Oslo Mignon.', 'Respire très fort.', 'Laisse des traces de museau.', 'Est derrière toi.'];
+  if(calme){ typed.textContent = phrases[0]; }
+  else (function boucle(p, i, sens){
+    var mot = phrases[p];
+    typed.textContent = mot.slice(0, i);
+    if(sens > 0 && i === mot.length) return setTimeout(function(){ boucle(p, i - 1, -1); }, 1500);
+    if(sens < 0 && i === 0) return setTimeout(function(){ boucle((p + 1) % phrases.length, 1, 1); }, 350);
+    setTimeout(function(){ boucle(p, i + sens, sens); }, sens > 0 ? 70 : 35);
+  })(0, 1, 1);
+
+  // Titre : lettres qui sautent au survol
+  var h1 = document.querySelector('.hero h1');
+  h1.setAttribute('aria-label', h1.textContent);
+  h1.innerHTML = h1.textContent.split(' ').map(function(w){ return '<span class="mot">' + w.split('').map(function(c){ return '<span aria-hidden="true">' + c + '</span>'; }).join('') + '</span>'; }).join(' ');
+  function ajuste(){ h1.style.fontSize = ''; var w = h1.clientWidth, sw = h1.scrollWidth; if(sw > w){ h1.style.fontSize = (parseFloat(getComputedStyle(h1).fontSize) * w / sw * .97) + 'px'; } }
+  ajuste(); addEventListener('resize', ajuste); if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajuste);
+
+  // Les yeux du fourmilier suivent le curseur
+  var yeux = document.querySelectorAll('.oeil'), svg = document.querySelector('.anteater');
+  addEventListener('pointermove', function(e){
+    if(calme) return;
+    var r = svg.getBoundingClientRect(), dx = e.clientX - (r.left + r.width * .62), dy = e.clientY - (r.top + r.height * .36), d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 300);
+    yeux.forEach(function(o){ o.style.transform = 'translate(' + (dx / d * 4.5 * k) + 'px,' + (dy / d * 3 * k) + 'px)'; });
+  });
+
+  // Inclinaison 3D du terminal et du cadre de jeu
+  if(!calme && matchMedia('(pointer:fine)').matches){
+    document.querySelectorAll('.terminal, .cadre').forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        el.style.transform = 'perspective(900px) rotateY(' + (x * 3) + 'deg) rotateX(' + (-y * 3) + 'deg)';
+      });
+      el.addEventListener('pointerleave', function(){ el.style.transform = ''; });
+    });
+  }
+
+  // Mode lampe torche
+  var btnL = document.getElementById('lumieres');
+  btnL.addEventListener('click', function(){
+    var noir = document.body.classList.toggle('noir');
+    btnL.textContent = noir ? 'Rallumer les lumières' : 'Éteindre les lumières';
+  });
+  addEventListener('pointermove', function(e){
+    document.body.style.setProperty('--x', e.clientX + 'px'); document.body.style.setProperty('--y', e.clientY + 'px');
+  });
+
+  // Deux yeux rouges qui épient depuis un bord de l'écran, de temps en temps
+  if(!calme){
+    var rg = document.createElement('div'); rg.className = 'regard'; rg.innerHTML = '<i></i><i></i>'; document.body.appendChild(rg);
+    (function guette(){
+      setTimeout(function(){
+        if(document.hidden || document.body.classList.contains('noir')) return guette();
+        var cote = Math.floor(Math.random() * 4), p = 8 + Math.random() * 78;
+        rg.style.cssText = cote < 2 ? 'top:' + p + 'vh;' + (cote ? 'right:6px' : 'left:6px') : 'left:' + p + 'vw;' + (cote === 2 ? 'top:6px' : 'bottom:6px');
+        rg.classList.add('on');
+        setTimeout(function(){ rg.classList.add('cligne'); }, 1400);
+        setTimeout(function(){ rg.classList.remove('cligne'); }, 1550);
+        setTimeout(function(){ rg.classList.remove('on'); guette(); }, 2600);
+      }, 22000 + Math.random() * 30000);
+    })();
+  }
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+  var KEY = 23;
+  function dec(h){ return h.match(/../g).map(function(x){ return String.fromCharCode(parseInt(x, 16) ^ KEY); }).join(''); }
+  function cyrb53(str, seed){ seed = seed || 0; var h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for(var i = 0, ch; i < str.length; i++){ ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0); }
+  var $ = function(id){ return document.getElementById(id); };
+  var calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var HASH = [8716592811391404, 6761878903602694, 1820714567628346, 6805668585731706, 1999662363607171, 1837322000187905, 5273194544244103];
+  var FL = {c3:'515842455a5e6c7b764874787964787b72487972487a727963487d767a767e646a', c4:'515842455a5e6c7972487d767a767e644871767e657248747879717e7679747248766248747b7e7279636a', c5:'515842455a5e6c78654826487270767b4826487263487b7248747871716572486478626165726a', c6:'515842455a5e6c7b72487b7e616572487348786548726f727462637248637862636a', c7:'515842455a5e6c7c7879767a7e487862486472676348747b7e74646a'};
+  var B64 = 'Rk9VUk1Je2Jhc2U2NF9uZXN0X3Bhc19kdV9jaGlmZnJlbWVudH0=';
+
+  /* ---------- État sauvegardé ---------- */
+  var etat = {ok:{}, ind:{}, nom:''};
+  try{ var sv = JSON.parse(localStorage.getItem('fa-ctf') || 'null'); if(sv) etat = sv; }catch(e){}
+  function sauve(){ try{ localStorage.setItem('fa-ctf', JSON.stringify(etat)); }catch(e){} try{ document.dispatchEvent(new Event('fa-progress')); }catch(e){} }
+
+  /* ---------- Rôle (défi 4) ---------- */
+  var memRole = 'visiteur';
+  function getRole(){ try{ var r = localStorage.getItem('fa_role'); if(r === null){ localStorage.setItem('fa_role', 'visiteur'); r = 'visiteur'; } return r; }catch(e){ return memRole; } }
+  getRole();
+
+  /* ---------- Défi 3 : la console ---------- */
+  window.__fourmi = {
+    aide: function(){ console.log('Commande : __fourmi.coffre("motDePasse"). Le mot de passe est ce que le fourmilier vole, au singulier.'); return 'ok'; },
+    coffre: function(m){ if(String(m).toLowerCase().trim() === 'diamant'){ var f = dec(FL.c3); console.log('Coffre ouvert : ' + f); return f; } console.log('Mauvais mot de passe.'); return 'refusé'; }
+  };
+
+  /* ---------- Défi 5 : injection SQL (simulation) ---------- */
+  var USERS = [{nom:'admin', mdp:'f0urm1l1er!'}, {nom:'kevin', mdp:'1234'}];
+  function tokenize(src){
+    var T = [], i = 0, n = src.length;
+    while(i < n){
+      var c = src[i];
+      if(/\s/.test(c)){ i++; continue; }
+      if(c === '-' && src[i + 1] === '-') break;
+      if(c === '#') break;
+      if(c === '/' && src[i + 1] === '*'){ var e = src.indexOf('*/', i + 2); if(e < 0) break; i = e + 2; continue; }
+      if(c === "'"){ var v = '', k = i + 1, ferme = false;
+        while(k < n){ if(src[k] === "'"){ if(src[k + 1] === "'"){ v += "'"; k += 2; continue; } ferme = true; break; } v += src[k++]; }
+        if(!ferme) throw new Error("Chaîne non terminée près de « " + src.slice(i, i + 12) + " »");
+        T.push({k:'str', v:v}); i = k + 1; continue; }
+      if(/[0-9]/.test(c)){ var m = /^[0-9]+(\.[0-9]+)?/.exec(src.slice(i))[0]; T.push({k:'num', v:parseFloat(m)}); i += m.length; continue; }
+      if(/[A-Za-z_]/.test(c)){ var id = /^[A-Za-z_0-9]+/.exec(src.slice(i))[0]; T.push({k:'id', v:id}); i += id.length; continue; }
+      var two = src.substr(i, 2);
+      if(['!=', '<>', '<=', '>='].indexOf(two) > -1){ T.push({k:'op', v:two}); i += 2; continue; }
+      if('=<>()'.indexOf(c) > -1){ T.push({k:'op', v:c}); i++; continue; }
+      throw new Error("Caractère inattendu « " + c + " »");
+    }
+    return T;
+  }
+  function num(a){ if(typeof a === 'boolean') return a ? 1 : 0; if(typeof a === 'number') return a; return parseFloat(a) || 0; }
+  function compare(a, b, op){
+    var x = a, y = b;
+    if(!(typeof a === 'string' && typeof b === 'string')){ x = num(a); y = num(b); }
+    switch(op){ case '=': return x === y; case '!=': case '<>': return x !== y; case '<': return x < y; case '>': return x > y; case '<=': return x <= y; default: return x >= y; }
+  }
+  function evalExpr(T, row){
+    var i = 0;
+    function peek(){ return T[i]; }
+    function next(){ return T[i++]; }
+    function kw(t, w){ return t && t.k === 'id' && t.v.toUpperCase() === w; }
+    function or(){ var v = and(); while(kw(peek(), 'OR')){ next(); var r = and(); v = v || r; } return v; }
+    function and(){ var v = not(); while(kw(peek(), 'AND')){ next(); var r = not(); v = v && r; } return v; }
+    function not(){ if(kw(peek(), 'NOT')){ next(); return !not(); } return cmp(); }
+    function cmp(){ var a = val(), t = peek();
+      if(t && t.k === 'op' && ['=', '!=', '<>', '<', '>', '<=', '>='].indexOf(t.v) > -1){ next(); return compare(a, val(), t.v); }
+      return num(a) !== 0; }
+    function val(){ var t = next(); if(!t) throw new Error('Fin de requête inattendue');
+      if(t.k === 'op' && t.v === '('){ var v = or(), c = next(); if(!c || c.v !== ')') throw new Error('Parenthèse fermante attendue'); return v; }
+      if(t.k === 'str' || t.k === 'num') return t.v;
+      if(t.k === 'id'){ var u = t.v.toUpperCase(); if(u === 'TRUE') return true; if(u === 'FALSE') return false; if(t.v === 'nom') return row.nom; if(t.v === 'mdp') return row.mdp; throw new Error('Colonne inconnue « ' + t.v + ' »'); }
+      throw new Error('Syntaxe inattendue près de « ' + t.v + ' »'); }
+    var res = or();
+    if(i < T.length) throw new Error('Syntaxe inattendue près de « ' + T[i].v + ' »');
+    return !!res;
+  }
+  function sqlLogin(u, p){
+    var q = "SELECT * FROM utilisateurs WHERE nom = '" + u + "' AND mdp = '" + p + "'";
+    var w = q.slice(q.indexOf('WHERE') + 6);
+    var T = tokenize(w);
+    return {q:q, rows:USERS.filter(function(r){ return evalExpr(T, r); })};
+  }
+
+  /* ---------- Défi 6 : XSS (simulation isolée dans un iframe sandbox) ---------- */
+  var XSSDOC = '<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;background:#12091f;color:#f6ecff;padding:10px;margin:0}input{width:68%;padding:7px;border-radius:6px;border:1px solid #b9a6d9;background:#1b1033;color:#fff}button{padding:7px 12px}p{margin:6px 0;padding:6px 8px;background:#27194a;border-radius:6px}h4{margin:0 0 8px;color:#ffd23f}</style><h4>Livre d’or du fourmilier</h4><input id="m" placeholder="Ton message…"> <button id="b">Publier</button><div id="l"></div><script>function donnerLeSecret(){parent.postMessage({fa:"xss"},"*")}document.getElementById("b").onclick=function(){var v=document.getElementById("m").value;document.getElementById("l").innerHTML+="<p>"+v+"</p>";document.getElementById("m").value=""}<\/script>';
+
+  /* ---------- Les défis ---------- */
+  var DEFIS = [
+    {id:'c1', titre:'Code source', niv:1, pts:50, hash:HASH[0],
+     txt:'Le navigateur reçoit tout le code de cette page. Le Fourmilier y a laissé un mot, bien caché mais pas invisible.',
+     indice:'Affiche le code source (Ctrl+U) puis cherche « FOURMI » (Ctrl+F).',
+     lecon:'Tout ce que le serveur t’envoie (HTML, JS, commentaires) est lisible par n’importe qui. Ne laisse jamais de secret dans le code d’une page.'},
+    {id:'c2', titre:'Pas si secret', niv:1, pts:75, hash:HASH[1],
+     txt:'Le Fourmilier a « chiffré » son message. Voici ce qu’il a écrit :',
+     indice:'Cette chaîne est en Base64. Utilise un décodeur en ligne ou tape atob("...") dans la console.',
+     lecon:'Base64 est un encodage, pas un chiffrement : n’importe qui peut le décoder. Pour protéger un secret, il faut un vrai chiffrement et une clé.'},
+    {id:'c3', titre:'La console bavarde', niv:2, pts:100, hash:HASH[2],
+     txt:'Ouvre la console du navigateur (F12). Un objet oublié nommé <code>__fourmi</code> traîne dans la page. Parle-lui.',
+     indice:'Dans la console, tape __fourmi.aide() et suis les instructions.',
+     lecon:'Tout ce qui est exposé dans window est accessible depuis la console. Les objets de débogage oubliés en production sont des portes ouvertes.'},
+    {id:'c4', titre:'Le garde distrait', niv:2, pts:150, hash:HASH[3],
+     txt:'La salle des coffres vérifie ton rôle… dans ton propre navigateur. À toi de jouer.',
+     indice:'F12 → onglet Application (ou Stockage) → Stockage local : modifie la valeur de la clé fa_role.',
+     lecon:'Une vérification de droits côté client n’est qu’une décoration : l’utilisateur contrôle son navigateur. Les droits se vérifient toujours côté serveur.'},
+    {id:'c5', titre:'Intranet du Fourmilier', niv:3, pts:250, hash:HASH[4],
+     txt:'Un formulaire de connexion, une requête SQL assemblée à la main. Connecte-toi en tant que « admin » sans connaître son mot de passe.',
+     indice:'Une apostrophe ferme le texte dans la requête. Fabrique une condition toujours vraie ou ferme la requête avec un commentaire (--).',
+     lecon:'Ton texte a été collé tel quel dans la requête, et il en a changé la logique. Parade : requêtes préparées (paramétrées), jamais de concaténation.'},
+    {id:'c6', titre:'Livre d’or piégé', niv:3, pts:250, hash:HASH[5],
+     txt:'Ce livre d’or affiche les messages sans les filtrer. Fais exécuter la fonction donnerLeSecret() par la page. (Le livre est isolé dans un cadre sécurisé : tu ne risques rien.)',
+     indice:'Les &lt;script&gt; insérés via innerHTML ne s’exécutent pas, mais un attribut comme onerror sur une image cassée, oui.',
+     lecon:'Le message a été inséré comme du HTML. Parade : afficher avec textContent, échapper les sorties, assainir le HTML et activer une politique CSP.'},
+    {id:'c7', titre:'Archives interdites', niv:2, pts:100, hash:HASH[6],
+     txt:'Certains dossiers ne sont pas censés exister. Les anciennes machines ont une mémoire… et le titre du site cache peut-être quelque chose.',
+     indice:'Le code Konami (↑ ↑ ↓ ↓ ← → ← → B A), ou sept clics rapides sur le titre de la page.',
+     lecon:'Les portes dérobées cachées finissent toujours par être trouvées : la sécurité par l’obscurité n’est pas de la sécurité.'}
+  ];
+
+  /* ---------- Rendu ---------- */
+  var liste = $('ctf-list');
+  function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function gagne(d){ return d.pts - (etat.ind[d.id] ? Math.round(d.pts * .25) : 0); }
+  function score(){ var t = 0; DEFIS.forEach(function(d){ if(etat.ok[d.id]) t += etat.ok[d.id]; }); return t; }
+  function maj(){
+    var max = DEFIS.reduce(function(a, d){ return a + d.pts; }, 0), sc = score(), fait = DEFIS.filter(function(d){ return etat.ok[d.id]; }).length;
+    $('ctf-score').textContent = sc; $('ctf-max').textContent = max; $('ctf-bar').style.width = (fait / DEFIS.length * 100) + '%';
+    if(fait === DEFIS.length){ $('ctf-win').hidden = false; $('ctf-final').textContent = sc; } else { $('ctf-win').hidden = true; }
+  }
+  function zone(d){
+    switch(d.id){
+      case 'c2': return '<div class="zone"><div class="mono-b">' + B64 + '</div></div>';
+      case 'c3': return '<div class="zone">Rien à cliquer ici : ça se passe dans la console du navigateur (F12).</div>';
+      case 'c4': return '<div class="zone"><p>Salle des coffres. Rôle détecté : <b id="role-etat">…</b></p><button class="btn" id="role-go" type="button">Entrer dans la salle</button><div class="sortie" id="role-out"></div></div>';
+      case 'c5': return '<div class="zone"><div class="row"><input id="sql-u" placeholder="Nom d’utilisateur" autocomplete="off" spellcheck="false"><input id="sql-p" placeholder="Mot de passe" autocomplete="off" spellcheck="false"><button class="btn" id="sql-go" type="button">Se connecter</button></div><div class="sortie" id="sql-q"></div><div class="sortie" id="sql-out"></div></div>';
+      case 'c6': return '<div class="zone"><iframe id="xss-frame" title="Livre d’or (isolé)" sandbox="allow-scripts"></iframe><div class="sortie" id="xss-out"></div></div>';
+      case 'c7': return '<div class="zone"><button class="btn" id="scan-go" type="button">Scanner les archives</button><div class="sortie" id="scan-out"></div></div>';
+    }
+    return '';
+  }
+  function carte(d){
+    var el = document.createElement('article'); el.className = 'defi' + (etat.ok[d.id] ? ' ok' : ''); el.id = 'defi-' + d.id;
+    el.innerHTML = '<div class="defi-t"><h3>' + (DEFIS.indexOf(d) + 1) + '. ' + esc(d.titre) + '</h3><span class="st" aria-label="Difficulté ' + d.niv + ' sur 3">' + '★'.repeat(d.niv) + '☆'.repeat(3 - d.niv) + '</span><span class="pts" id="pts-' + d.id + '"></span></div>' +
+      '<p>' + d.txt + '</p>' + zone(d) +
+      '<div class="flagrow"><input id="in-' + d.id + '" placeholder="FOURMI{...}" autocomplete="off" spellcheck="false" aria-label="Drapeau du défi ' + d.titre + '"><button class="btn" id="ok-' + d.id + '" type="button">Valider</button><button class="mini" id="ind-' + d.id + '" type="button">Indice (−25 %)</button></div>' +
+      '<div class="retour" id="ret-' + d.id + '" aria-live="polite"></div><div id="ind-txt-' + d.id + '"></div><div id="lec-' + d.id + '"></div>';
+    liste.appendChild(el);
+    ptsLabel(d); if(etat.ind[d.id]) montreIndice(d); if(etat.ok[d.id]) montreLecon(d);
+    $('ok-' + d.id).addEventListener('click', function(){ valider(d); });
+    $('in-' + d.id).addEventListener('keydown', function(e){ if(e.key === 'Enter') valider(d); });
+    $('ind-' + d.id).addEventListener('click', function(){ etat.ind[d.id] = 1; sauve(); montreIndice(d); ptsLabel(d); });
+  }
+  function ptsLabel(d){ $('pts-' + d.id).textContent = etat.ok[d.id] ? '✔ ' + etat.ok[d.id] + ' pts' : gagne(d) + ' pts'; }
+  function montreIndice(d){ $('ind-txt-' + d.id).innerHTML = '<div class="lecon" style="border-color:#ffd23f;background:#2a2308cc;color:#fff3c4">Indice : ' + d.indice + '</div>'; $('ind-' + d.id).disabled = true; }
+  function montreLecon(d){ $('lec-' + d.id).innerHTML = '<div class="lecon"><b>Ce que tu as appris :</b> ' + d.lecon + '</div>'; }
+  function gemmes(el){
+    if(calme) return; var r = el.getBoundingClientRect();
+    for(var i = 0; i < 12; i++){ var g = document.createElement('i'); g.className = 'gemme-vol'; g.style.left = (r.left + r.width / 2) + 'px'; g.style.top = (r.top + r.height / 2) + 'px';
+      g.style.background = i % 2 ? '#ffd23f' : '#ff3d9a'; g.style.setProperty('--dx', (Math.random() * 240 - 120) + 'px'); g.style.setProperty('--dy', (Math.random() * -160 - 20) + 'px'); document.body.appendChild(g); setTimeout((function(n){ return function(){ n.remove(); }; })(g), 1000); }
+  }
+  function valider(d){
+    var v = $('in-' + d.id).value.trim(), ret = $('ret-' + d.id);
+    if(!v){ ret.className = 'retour mauvais'; ret.textContent = 'Entre un drapeau.'; return; }
+    if(cyrb53(v) === d.hash){
+      if(!etat.ok[d.id]) etat.ok[d.id] = gagne(d);
+      sauve(); ret.className = 'retour bon'; ret.textContent = 'Drapeau valide ! +' + etat.ok[d.id] + ' points.';
+      $('defi-' + d.id).classList.add('ok'); ptsLabel(d); montreLecon(d); gemmes($('ok-' + d.id)); maj();
+    } else { ret.className = 'retour mauvais'; ret.textContent = 'Ce n’est pas le bon drapeau.'; }
+  }
+  DEFIS.forEach(carte);
+  maj();
+
+  /* ---------- Branchement des zones interactives ---------- */
+  if($('role-go')){ $('role-etat').textContent = getRole();
+    $('role-go').addEventListener('click', function(){
+      var r = getRole(), out = $('role-out'); $('role-etat').textContent = r;
+      if(r === 'admin'){ out.className = 'sortie bon'; out.textContent = 'Accès accordé. Drapeau : ' + dec(FL.c4); }
+      else { out.className = 'sortie mauvais'; out.textContent = 'Accès refusé : « ' + r + ' » n’a pas le droit d’entrer.'; }
+    }); }
+  if($('sql-go')){
+    var go = function(){
+      var u = $('sql-u').value, p = $('sql-p').value, q = $('sql-q'), out = $('sql-out');
+      q.textContent = "SELECT * FROM utilisateurs WHERE nom = '" + u + "' AND mdp = '" + p + "'";
+      try{
+        var r = sqlLogin(u, p);
+        if(!r.rows.length){ out.className = 'sortie mauvais'; out.textContent = 'Identifiants incorrects (0 ligne).'; }
+        else if(r.rows[0].nom === 'admin'){ out.className = 'sortie bon'; out.textContent = r.rows.length + ' ligne(s). Connecté en tant que admin. Drapeau : ' + dec(FL.c5); }
+        else { out.className = 'sortie'; out.textContent = 'Connecté en tant que ' + r.rows[0].nom + '. Pas de coffre ici : vise « admin ».'; }
+      }catch(err){ out.className = 'sortie mauvais'; out.textContent = 'Erreur SQL : ' + err.message; }
+    };
+    $('sql-go').addEventListener('click', go);
+    ['sql-u', 'sql-p'].forEach(function(id){ $(id).addEventListener('keydown', function(e){ if(e.key === 'Enter') go(); }); });
+  }
+  var frame = $('xss-frame');
+  if(frame){ frame.srcdoc = XSSDOC;
+    addEventListener('message', function(e){
+      if(e.source === frame.contentWindow && e.data && e.data.fa === 'xss'){ var o = $('xss-out'); o.className = 'sortie bon'; o.textContent = 'La page a exécuté ton code ! Drapeau : ' + dec(FL.c6); }
+    }); }
+
+  /* ---------- Défi 7 : Konami + clics sur le titre ---------- */
+  function toastFlag(msg){
+    var t = document.createElement('div'); t.className = 'secret-toast'; t.innerHTML = '<b>ARCHIVE DÉVERROUILLÉE</b><br>' + msg + '<br><span class="mono">' + dec(FL.c7) + '</span>';
+    document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 9000);
+    var o = $('scan-out'); if(o){ o.className = 'sortie bon'; o.textContent = msg + ' Drapeau : ' + dec(FL.c7); }
+  }
+  var code = [], konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  addEventListener('keydown', function(ev){
+    if(/INPUT|TEXTAREA/.test((ev.target || {}).tagName || '')) return;
+    code.push(ev.key); if(code.length > konami.length) code.shift();
+    if(konami.every(function(k, i){ return String(code[i]).toLowerCase() === k.toLowerCase(); })){
+      toastFlag('CODE KONAMI VALIDÉ — Dossier 004 : le Fourmilier connaît déjà le chemin.'); document.body.classList.add('secret-open'); code = [];
+    }
+  });
+  var clics = 0, tClics, h1 = document.querySelector('.hero h1');
+  if(h1) h1.addEventListener('click', function(){
+    clics++; clearTimeout(tClics); tClics = setTimeout(function(){ clics = 0; }, 1800);
+    if(clics >= 7){ clics = 0; toastFlag('Tu as trouvé le dossier 7. « Il n’est jamais vraiment parti. »'); }
+  });
+  if($('scan-go')) $('scan-go').addEventListener('click', function(){
+    var o = $('scan-out'); o.className = 'sortie'; o.textContent = 'Scan terminé : 2 fichiers cachés détectés. Essaie le code Konami ou clique 7 fois vite sur le titre.';
+  });
+
+  /* ---------- Réinitialisation + diplôme ---------- */
+  $('ctf-reset').addEventListener('click', function(){
+    if(!confirm('Effacer ta progression au CTF ?')) return;
+    etat = {ok:{}, ind:{}, nom:''}; sauve(); try{ localStorage.setItem('fa_role', 'visiteur'); }catch(e){} liste.innerHTML = ''; DEFIS.forEach(carte); maj(); wire2();
+  });
+  function wire2(){ if($('role-go')) $('role-etat').textContent = getRole(); }
+  $('ctf-name').value = etat.nom || '';
+  $('ctf-cert').addEventListener('click', function(){
+    var n = $('ctf-name').value.trim().slice(0, 24) || 'Hacker anonyme'; etat.nom = n; sauve();
+    var d = $('ctf-diplome'); d.hidden = false;
+    d.innerHTML = '<span style="color:#b9a6d9;font-size:.8rem">DIPLÔME OFFICIEL DU COFFRE DU FOURMILIER</span><b>' + esc(n) + '</b><span style="color:#ffd23f">a résolu les 7 défis avec ' + score() + ' points</span><small>Délivré le ' + new Date().toLocaleDateString('fr-FR') + ' · Signé : un fourmilier anonyme (en respirant fort)</small>';
+    gemmes($('ctf-cert'));
+  });
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('academie');if(!root)return;
+var A={"t1": ["ab234b1ed8af76b4bc5bcc18", "ef3d8f08fc20883ce3525ccb", "534eb83b38e46f20936f4574"], "t2": ["59753d273f7b80c29cf31bd7"], "t3": ["15011d794eb8be4a59453fa8"], "p1": ["3d8186a0d8637c56e3f4171d"], "p2": ["ca978112ca1bbdcafac231b3"], "p3": ["3e23e8160039594a33894f65"], "ph": ["5e6d0efe6ac674478ded43b4"], "c1": ["23df2ca41316489504d44f3a"], "c2": ["61ba057921426db9c743505b"], "c3": ["edf668820a2925e60f376eb8"], "c4": ["4d78e62d899a4d7beea1ce3a", "87d51086464293909762e752"], "i1": ["28a47ae61ea5fb849497be5a"], "n1": ["6d05621ab7cb7b4fb796ca2f"], "n2": ["2e7d2c03a9507ae265ecf5b5"], "n3": ["1f35e175b07fc080eb57fc9d", "6f4b6612125fb3a0daecd279", "42af412d8659682b424ae18b"], "n4": ["757db91a80964d58a2b0d26b"], "l1": ["ad196243a4bd13d70b999336"], "l2": ["65069fc77c1d8fed9ea2dd3c"], "l3": ["c63cff41827763f3b20b6814", "fb8e277f0fbb525c4d0ecdaa", "70abc9fc27ac322694aa65dc", "1c6bac7c28d3c443f7f4dbbc", "2de25b47bef2e32bf197a7fa"], "s1": ["d69244b7cf18079d29d90523", "b8324edc396ce64a8514ef0c", "e051721e345774eccff22a0b"], "s2": ["83ddfc63aecba29ac18d5f72"], "w0": ["75623fcf9d5eb8d75d7bb73b"], "w1": ["55aa43ab14c3c9f3ecc80891"], "w2": ["785f3ec7eb32f30b90cd0fcf"], "w3": ["f15cea39f11dc0371cfb9a4b"], "w4": ["2c624232cdd221771294dfbb", "42761d9a2ec4d85c38aef156"], "w5": ["4d78e62d899a4d7beea1ce3a"], "o1": ["c7688e8e82461bcee88e29ff"], "o2": ["36168689408f6d25275e0fb5"], "o3": ["07de793c6beabd860f1ac0ff"], "f1": ["6d05621ab7cb7b4fb796ca2f"], "f2": ["3e23e8160039594a33894f65"], "f3": ["f6190043a5bcb06ac05d7420"]},D={"ces": "SL TVA KL WHZZL KL SH SVNL LZA SHUALYUL", "b64": "Rk9VUk1Je2Jhc2U2NF9uZXN0X3Bhc19kdV9jaGlmZnJlbWVudH0=", "hex": "46 4f 55 52 4d 49 7b 30 78 5f 66 6f 75 72 6d 69 7d", "vig": "APUCMQT EDX SC BLW", "pwh": "3d8186a0d8637c56e3f4171dea9d06e2b3f588056238f77567df874691c7debf", "rot": "FVSSYRG", "bin": "01001111 01010000 01000001 01001100 01000101", "b64w": "MDAwNw==", "hexw": "4D 41 55 52 49 43 45"};
+/* ---------- SHA-256 (pur JS, marche aussi hors HTTPS) ---------- */
+function sha256(s){var K=[],H=[],i,j;function isP(n){for(var f=2;f*f<=n;f++)if(n%f===0)return false;return true}function fr(x){return(x-Math.floor(x))*4294967296|0}
+ for(i=2,j=0;j<64;i++)if(isP(i)){if(j<8)H[j]=fr(Math.pow(i,1/2));K[j++]=fr(Math.pow(i,1/3))}
+ var b=unescape(encodeURIComponent(s)),l=b.length*8,w=[];for(i=0;i<b.length;i++)w[i>>2]|=b.charCodeAt(i)<<(24-(i%4)*8);w[l>>5]|=0x80<<(24-l%32);w[((l+64>>9)<<4)+15]=l;
+ for(i=0;i<w.length;i+=16){var a=H.slice(0),W=[];for(j=0;j<64;j++){if(j<16)W[j]=w[i+j]|0;else{var x=W[j-15],y=W[j-2];W[j]=(((x>>>7|x<<25)^(x>>>18|x<<14)^(x>>>3))+W[j-7]+((y>>>17|y<<15)^(y>>>19|y<<13)^(y>>>10))+W[j-16])|0}
+  var e=a[4],t1=a[7]+((e>>>6|e<<26)^(e>>>11|e<<21)^(e>>>25|e<<7))+((e&a[5])^(~e&a[6]))+K[j]+W[j],c=a[0],t2=((c>>>2|c<<30)^(c>>>13|c<<19)^(c>>>22|c<<10))+((c&a[1])^(c&a[2])^(a[1]&a[2]));a=[(t1+t2)|0].concat(a);a[4]=(a[4]+t1)|0;a.length=8}
+  for(j=0;j<8;j++)H[j]=(H[j]+a[j])|0}
+ var o='';for(i=0;i<8;i++)o+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);return o}
+var norm=function(s){return String(s).trim().toLowerCase().split(/\s+/).join(' ')};
+function good(k,v){return(A[k]||[]).indexOf(sha256(norm(v)).slice(0,24))>=0}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+/* ---------- état ---------- */
+var st={done:{},hint:{},week:{},pseudo:''};try{var sv=JSON.parse(localStorage.getItem('fa-acad')||'{}');for(var k in sv)st[k]=sv[k]}catch(e){}
+function save(){try{localStorage.setItem('fa-acad',JSON.stringify(st))}catch(e){}try{document.dispatchEvent(new Event('fa-progress'))}catch(e){}}
+function toast(m){var t=document.createElement('div');t.className='ac-toast';t.innerHTML=m;document.body.appendChild(t);setTimeout(function(){t.remove()},2600)}
+/* ---------- salles ---------- */
+var ROOMS=[
+ {id:'term',ic:'🖥️',n:'Terminal Linux',lvl:1,d:'Les commandes de base pour se déplacer et fouiller dans un système.',
+  lecon:'Un serveur se pilote presque toujours au clavier. <code>ls</code> liste un dossier (<code>ls -a</code> montre aussi les fichiers cachés, ceux qui commencent par un point, <code>ls -l</code> montre les droits), <code>cd</code> change de dossier, <code>cat</code> affiche un fichier, <code>grep</code> cherche un mot dans un fichier, <code>chmod</code> change les droits. Tape <code>help</code> pour commencer.',
+  tasks:[{k:'t1',p:30,q:'Quel est le nom du dossier caché dans ton dossier personnel ?',h:'Les fichiers cachés n’apparaissent qu’avec ls -a.'},
+   {k:'t2',p:35,q:'Le drapeau est perdu dans /var/log/acces.log. Retrouve-le.',h:'grep FOURMI /var/log/acces.log'},
+   {k:'t3',p:35,q:'Le fichier coffre/diamant.txt est verrouillé. Donne-toi le droit de le lire, puis lis-le.',h:'chmod +r coffre/diamant.txt, puis cat coffre/diamant.txt'}]},
+ {id:'mdp',ic:'🔑',n:'Mots de passe',lvl:1,d:'Hachage, sel, attaque par dictionnaire : pourquoi « 123456 » ne tient pas une seconde.',
+  lecon:'Un site sérieux ne garde jamais ton mot de passe : il garde son <b>hash</b>, une empreinte calculée par une fonction à sens unique comme SHA-256. Mais si ton mot de passe est un mot courant, un pirate peut hacher toute une liste de mots et comparer : c’est l’<b>attaque par dictionnaire</b>. Le <b>sel</b>, une valeur aléatoire ajoutée avant de hacher, empêche de réutiliser des tables toutes prêtes.',
+  tasks:[{k:'p1',p:40,q:'Le Fourmilier a volé ce hash SHA-256 : <code style="word-break:break-all">'+D.pwh+'</code>. Lance l’attaque par dictionnaire : quel était le mot de passe ?',h:'Clique sur « Lancer l’attaque » et observe la ligne qui correspond.'},
+   {k:'p2',p:30,q:'À 10 milliards d’essais par seconde, combien de temps pour casser un code de 4 chiffres ?',o:{a:'Moins d’une seconde',b:'Environ une journée',c:'Plusieurs siècles'},h:'4 chiffres, ça ne fait que 10 000 combinaisons. Teste « 1234 » dans l’outil.'},
+   {k:'p3',p:30,q:'À quoi sert le sel ?',o:{a:'À raccourcir le mot de passe',b:'À ce que deux mots de passe identiques n’aient pas le même hash, et à rendre inutiles les tables pré-calculées',c:'À chiffrer tout le disque dur'},h:'Teste deux fois le même mot de passe avec un sel différent dans l’outil.'}]},
+ {id:'phish',ic:'🎣',n:'Phishing',lvl:1,d:'Repérer les faux e-mails avant de cliquer.',
+  lecon:'Le phishing (hameçonnage) imite un expéditeur de confiance pour te faire cliquer ou donner un mot de passe. Les signes : une <b>urgence</b> inventée, une <b>adresse d’expéditeur</b> bizarre, un <b>lien</b> qui mène ailleurs que ce qu’il affiche (survole-le !), une demande de mot de passe ou de paiement.',
+  tasks:[{k:'ph',p:100,q:'Classe correctement les 4 e-mails : le drapeau apparaîtra.',h:'Survole chaque lien et lis l’adresse de l’expéditeur lettre par lettre.'}]},
+ {id:'crypto',ic:'🧩',n:'Cryptographie',lvl:2,d:'César, Base64, hexadécimal, Vigenère : décode les messages du Fourmilier.',
+  lecon:'<b>César</b> décale chaque lettre d’un même nombre. <b>Vigenère</b> décale chaque lettre selon une clé. <b>Base64</b> et l’<b>hexadécimal</b> ne sont pas des chiffrements : ce sont des façons d’écrire des données, n’importe qui peut les relire. Ne confonds jamais encoder et chiffrer !',
+  tasks:[{k:'c1',p:35,q:'César : <code>'+D.ces+'</code>. Quel est le mot de passe de la loge ?',h:'Essaie tous les décalages avec le curseur : un seul donne du français.'},
+   {k:'c2',p:35,q:'Base64 : <code style="word-break:break-all">'+D.b64+'</code>',h:'Colle-le dans l’outil Base64 et clique sur « Décoder ».'},
+   {k:'c3',p:35,q:'Hexadécimal : <code>'+D.hex+'</code>',h:'Chaque paire de caractères est un octet, donc une lettre.'},
+   {k:'c4',p:45,q:'Vigenère : <code>'+D.vig+'</code>. Qui est en bas ?',h:'La clé est le nom de la résidence, en majuscules.'}]},
+ {id:'insp',ic:'🔍',n:'Inspecteur web',lvl:2,d:'Les outils du navigateur (F12) montrent tout ce qu’une page cache.',
+  lecon:'Appuie sur <b>F12</b> (ou clic droit → Inspecter). <b>Éléments</b> montre le HTML vivant avec ses attributs, <b>Console</b> affiche les messages du script, <b>Application/Stockage</b> montre le stockage local, et <b>Ctrl+U</b> affiche le code source. Une page ne peut rien te cacher : ne mets jamais de secret dans du code côté navigateur.',
+  tasks:[{k:'i1',p:150,q:'Quatre fragments du drapeau sont cachés : dans le <b>code source</b> (un commentaire), dans un <b>attribut</b> d’élément de cette salle, dans le <b>stockage local</b> et dans la <b>console</b>. Assemble-les.',h:'Code source : cherche « fragment 1/4 ». Éléments : l’attribut data-fragment. Stockage local : la clé fa-frag3. Console : ouvre-la une fois cette salle ouverte.'}]},
+ {id:'net',ic:'🌐',n:'Réseau',lvl:2,d:'IP, ports, DNS, HTTPS, et un scan de ports à analyser.',
+  lecon:'Chaque machine a une <b>adresse IP</b>. Sur une machine, chaque service écoute sur un <b>port</b> (80 pour le web, 443 pour le web chiffré en HTTPS, 22 pour SSH…). Le <b>DNS</b> traduit un nom comme <code>opale.fr</code> en adresse IP. Un <b>scan de ports</b> liste les services ouverts : c’est la première chose qu’un attaquant regarde… et que tu dois vérifier chez toi.',
+  tasks:[{k:'n1',p:30,q:'Sur quel port écoute HTTPS ?',h:'Regarde le schéma, au niveau du serveur.'},
+   {k:'n2',p:30,q:'Le DNS sert à…',o:{a:'chiffrer les connexions',b:'bloquer les virus',c:'traduire un nom de domaine en adresse IP'},h:'Regarde l’étape au milieu du schéma.'},
+   {k:'n3',p:45,q:'Dans le scan, quel service accepte une connexion anonyme ?',h:'Lis la colonne de droite du scan.'},
+   {k:'n4',p:45,q:'Quel port ouvert n’aurait jamais dû être exposé sur Internet ?',h:'Une base de données ne doit jamais être joignable de l’extérieur.'}]},
+ {id:'osint',ic:'🕵️',n:'Enquête OSINT',lvl:2,d:'Tout ce qu’on publie peut servir à pirater un compte.',
+  lecon:'L’<b>OSINT</b> (renseignement en sources ouvertes), c’est trouver des informations publiques : réseaux sociaux, annuaires, photos… Les <b>questions secrètes</b> (« nom de ton premier animal ? », « ville de naissance ? ») se devinent souvent en lisant un simple profil. Ne publie jamais ce qui sert à récupérer tes comptes, et préfère la double authentification aux questions secrètes.',
+  tasks:[{k:'o1',p:40,q:'Comment s’appelle le premier animal de Jacqueline ?',h:'Lis le post d’anniversaire.'},
+   {k:'o2',p:40,q:'Dans quelle ville est-elle née ?',h:'Elle parle de sa « ville natale ».'},
+   {k:'o3',p:70,q:'Récupère son compte avec le formulaire « Mot de passe oublié ». Quel drapeau s’affiche ?',h:'Utilise tes deux réponses précédentes dans le formulaire.'}]},
+ {id:'logs',ic:'📜',n:'Analyse de logs',lvl:3,d:'Retrouver une intrusion dans le journal d’un serveur.',
+  lecon:'Les <b>logs</b> sont le journal de bord d’un serveur. Une attaque par force brute y laisse une trace typique : des dizaines d’échecs de connexion depuis la même IP… puis, parfois, un succès. Filtrer les lignes est la base du métier d’analyste.',
+  tasks:[{k:'l1',p:60,q:'Quelle adresse IP mène l’attaque par force brute ?',h:'Filtre avec « Failed ».'},
+   {k:'l2',p:60,q:'Quel compte a fini par être compromis ?',h:'Filtre avec « Accepted ».'},
+   {k:'l3',p:80,q:'À quelle heure exacte l’attaquant s’est-il connecté avec succès ? (hh:mm:ss)',h:'Même ligne que la question précédente.'}]},
+ {id:'steg',ic:'🖼️',n:'Stéganographie',lvl:3,d:'Une image peut cacher un message dans ses métadonnées… ou dans ses pixels.',
+  lecon:'La <b>stéganographie</b> cache un message à l’intérieur d’un fichier anodin. Les <b>métadonnées</b> (EXIF) d’une photo peuvent révéler l’auteur, l’appareil ou le lieu. Et chaque pixel a des couleurs codées sur 8 bits : changer le <b>bit de poids faible</b> ne se voit pas à l’œil… mais peut contenir tout un texte.',
+  tasks:[{k:'s1',p:60,q:'D’après les métadonnées, qui est l’auteur de l’image ?',h:'Clique sur « Lire les métadonnées ».'},
+   {k:'s2',p:140,q:'Un drapeau est caché dans les pixels. Lequel ?',h:'Canal rouge, bit 0 (le bit de poids faible).'}]},
+ {id:'fw',ic:'🧱',n:'Pare-feu',lvl:3,d:'Écrire des règles qui laissent passer les clients… et pas l’attaquant.',
+  lecon:'Un <b>pare-feu</b> filtre le trafic avec des règles lues <b>de haut en bas</b> : la première règle qui correspond décide, les suivantes sont ignorées. Si aucune ne correspond, c’est la <b>politique par défaut</b> qui s’applique. La bonne pratique : tout bloquer par défaut, puis n’ouvrir que le strict nécessaire.',
+  tasks:[{k:'f1',p:30,q:'Quel port faut-il ouvrir pour le web chiffré (HTTPS) ?',h:'Le même que dans la salle Réseau.'},
+   {k:'f2',p:50,q:'Comment un pare-feu lit-il ses règles ?',o:{a:'Toutes en même temps : la plus stricte gagne',b:'De haut en bas : la première qui correspond décide',c:'De bas en haut : la dernière ajoutée décide'},h:'Essaie de placer « Autoriser * 443 » avant puis après le blocage de l’attaquant.'},
+   {k:'f3',p:120,q:'Règle le pare-feu pour que les 7 paquets du test aient le bon sort. Quel drapeau obtiens-tu ?',h:'Bloque d’abord 185.220.101.7 (tous ports), autorise ensuite 80 et 443 pour tout le monde, puis 22 seulement pour 10.0.0.12, et passe la politique par défaut sur « Bloquer ».'}]}];
+var TASKS={};ROOMS.forEach(function(r){r.tasks.forEach(function(t){t.r=r;TASKS[t.k]=t})});
+var TOTAL=Object.keys(TASKS).length;
+var BADGES=[{id:'first',ic:'🚩',n:'Premier drapeau',ok:function(){return nDone()>0}},{id:'term',ic:'🖥️',n:'Terminator',ok:function(){return rDone('term')}},{id:'mdp',ic:'🔑',n:'Casseur de hash',ok:function(){return rDone('mdp')}},
+ {id:'phish',ic:'🎣',n:'Anti-hameçon',ok:function(){return rDone('phish')}},{id:'crypto',ic:'🧩',n:'Cryptographe',ok:function(){return rDone('crypto')}},{id:'insp',ic:'🔍',n:'Œil de lynx',ok:function(){return rDone('insp')}},
+ {id:'net',ic:'🌐',n:'Cartographe',ok:function(){return rDone('net')}},{id:'logs',ic:'📜',n:'Analyste',ok:function(){return rDone('logs')}},{id:'steg',ic:'🖼️',n:'Pixel détective',ok:function(){return rDone('steg')}},{id:'osint',ic:'🕵️',n:'Enquêteur',ok:function(){return rDone('osint')}},{id:'fw',ic:'🧱',n:'Gardien du pare-feu',ok:function(){return rDone('fw')}},
+ {id:'pur',ic:'🧠',n:'Sans indice',ok:function(){return nDone()>=5&&!Object.keys(st.hint).length}},{id:'week',ic:'📅',n:'Défi de la semaine',ok:function(){return Object.keys(st.week).length>0}},{id:'all',ic:'🏆',n:'Diplômé',ok:function(){return nDone()===TOTAL}}];
+var RANKS=[[0,'🥚','Larve'],[150,'🐜','Fourmi ouvrière'],[400,'⚔️','Fourmi soldat'],[750,'🔦','Pisteur de nuit'],[1100,'🦡','Fourmilier junior'],[1400,'👑','Maître du museau']];
+function nDone(){return Object.keys(st.done).filter(function(k){return TASKS[k]}).length}
+function rDone(id){var r=ROOMS.filter(function(q){return q.id===id})[0];return r.tasks.every(function(t){return st.done[t.k]!==undefined})}
+function points(){var p=0;for(var k in st.done)p+=st.done[k];for(var w in st.week)p+=st.week[w];return p}
+function rank(){var p=points(),r=RANKS[0];RANKS.forEach(function(q){if(p>=q[0])r=q});return r}
+/* ---------- profil, grille, mémo, diplôme ---------- */
+function paintProf(){var r=rank(),p=points(),nx=RANKS.filter(function(q){return q[0]>p})[0];
+ document.getElementById('ac-prof').innerHTML='<div class="ac-ava">'+r[1]+'</div><div class="ac-id"><input id="ac-nom" maxlength="20" placeholder="Ton pseudo de hacker" value="'+esc(st.pseudo||'')+'" aria-label="Pseudo"><div class="ac-rang">'+r[2]+'</div><div class="ac-pts"><b>'+p+'</b> points · '+nDone()+'/'+TOTAL+' questions'+(nx?' · prochain rang à '+nx[0]:' · rang maximum !')+'</div></div>'
+  +'<div class="bar" aria-hidden="true"><i style="width:'+Math.round(nDone()/TOTAL*100)+'%"></i></div><div class="ac-badges">'+BADGES.map(function(b){var o=b.ok();return '<span class="ac-badge'+(o?'':' off')+'" title="'+(o?'Obtenu':'À débloquer')+'">'+b.ic+' '+b.n+'</span>'}).join('')+'</div>';
+ document.getElementById('ac-nom').addEventListener('input',function(e){st.pseudo=e.target.value;save();var c=document.getElementById('ac-cert-nom');if(c)c.textContent=st.pseudo||'Hacker anonyme'})}
+var filtre='tous',cur=null;
+function paintGrid(){document.getElementById('ac-grid').innerHTML=ROOMS.filter(function(r){return filtre==='tous'||String(r.lvl)===filtre}).map(function(r){var n=r.tasks.filter(function(t){return st.done[t.k]!==undefined}).length,f=n===r.tasks.length;
+ return '<button type="button" class="ac-card'+(f?' fini':'')+(cur===r.id?' on':'')+'" data-room="'+r.id+'"><span class="ac-prog">'+(f?'✔ ':'')+n+'/'+r.tasks.length+'</span><div class="ic">'+r.ic+'</div><h3>'+r.n+'</h3><p>'+r.d+'</p><span class="ac-lvl l'+r.lvl+'">'+['','Débutant','Intermédiaire','Avancé'][r.lvl]+' · '+r.tasks.reduce(function(a,t){return a+t.p},0)+' pts</span></button>'}).join('')}
+var MEMO=['Un mot de passe différent pour chaque site, rangé dans un <b>gestionnaire de mots de passe</b>.','Active la <b>double authentification</b> partout où c’est possible (code par appli plutôt que par SMS).','Fais les <b>mises à jour</b> dès qu’elles sortent : elles bouchent des failles connues.','Avant de cliquer : <b>survole le lien</b>, lis l’adresse de l’expéditeur, méfie-toi de l’urgence.','Une phrase de passe longue (« fourmilier-mange-4-pizzas-la-nuit ») vaut mieux qu’un mot compliqué et court.','Ne mets jamais de secret dans le code d’une page web : n’importe qui peut le lire avec F12.','Sur un Wi-Fi public, vérifie le <b>cadenas HTTPS</b> et évite les opérations sensibles.','Fais des <b>sauvegardes</b> régulières, dont une hors ligne : c’est le meilleur remède contre les rançongiciels.'];
+function paintMemo(){var n=ROOMS.filter(function(r){return rDone(r.id)}).length,el=document.getElementById('ac-memo');
+ el.innerHTML=n>=5?'<div class="ac-memo"><h3>🛡️ Mémo sécurité débloqué</h3><ul>'+MEMO.map(function(m){return '<li>'+m+'</li>'}).join('')+'</ul></div>':'<div class="ac-memo verrou">🔒 <b>Mémo sécurité</b> : termine 5 salles pour le débloquer ('+n+'/5).</div>';
+ var c=document.getElementById('ac-cert');if(nDone()===TOTAL){c.hidden=false;c.innerHTML='<h3>Académie terminée !</h3><div class="diplome"><div>Certificat de l’Académie du Fourmilier</div><b id="ac-cert-nom">'+esc(st.pseudo||'Hacker anonyme')+'</b><div>'+rank()[2]+' · '+points()+' points</div><small>Délivré le '+new Date().toLocaleDateString('fr-FR')+' · '+ROOMS.length+' salles sur '+ROOMS.length+' · signé : un museau de 60 cm</small></div>'}else c.hidden=true}
+function paintAll(){paintProf();paintGrid();paintMemo()}
+/* ---------- tâches ---------- */
+function taskHtml(t){var d=st.done[t.k]!==undefined;
+ var inp=t.o?Object.keys(t.o).map(function(k){return '<label class="opt"><input type="radio" name="ac-'+t.k+'" value="'+k+'"'+(d?' disabled':'')+'> '+t.o[k]+'</label>'}).join(''):'<div class="flagrow"><input data-in="'+t.k+'" placeholder="Ta réponse" autocomplete="off" spellcheck="false"'+(d?' disabled value="✔ Résolu"':'')+'></div>';
+ return '<div class="tache'+(d?' ok':'')+'" id="ac-t-'+t.k+'"><div class="q">'+t.q+' <small>('+t.p+' pts)</small></div>'+inp+(d?'<div class="retour bon">✔ Résolu : +'+st.done[t.k]+' pts</div>':'<div class="row2" style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button type="button" class="btn" style="padding:8px 18px" data-check="'+t.k+'">Valider</button><button type="button" class="mini" data-hint="'+t.k+'">Indice (−25 %)</button></div>'+(st.hint[t.k]?'<div class="indice">💡 '+t.h+'</div>':'')+'<div class="retour" id="ac-r-'+t.k+'"></div>')+'</div>'}
+function check(k){var t=TASKS[k],v;if(t.o){var c=root.querySelector('input[name="ac-'+k+'"]:checked');if(!c){fb(k,'Choisis une réponse.',0);return}v=c.value}else{v=root.querySelector('[data-in="'+k+'"]').value;if(!v.trim()){fb(k,'Écris une réponse.',0);return}}
+ if(good(k,v)){var before=BADGES.filter(function(b){return b.ok()}).length;st.done[k]=Math.round(t.p*(st.hint[k]?.75:1));save();toast('✔ Bonne réponse : +'+st.done[k]+' points');
+  var el=document.getElementById('ac-t-'+k);el.outerHTML=taskHtml(t);paintAll();var after=BADGES.filter(function(b){return b.ok()});if(after.length>before)setTimeout(function(){toast('🏅 Nouveau badge : '+after[after.length-1].n)},1200)}
+ else fb(k,'✖ Pas tout à fait. Réessaie !',-1)}
+function fb(k,m,c){var r=document.getElementById('ac-r-'+k);if(r){r.textContent=m;r.className='retour'+(c<0?' mauvais':'')}}
+/* ---------- outils des salles ---------- */
+var TOOLS={};
+/* Terminal */
+var LOG=(function(){var ips=['10.0.0.12','10.0.0.31','192.168.1.23','10.0.0.7'],pg=['/','/planning','/badge','/loge','/api/rondes','/img/opale.png','/contact'],L=[];for(var i=0;i<38;i++){L.push('2026-11-0'+(1+i%3)+' '+('0'+(i%24)).slice(-2)+':'+('0'+(i*7%60)).slice(-2)+' '+ips[i%4]+' GET '+pg[i%7]+' 200');if(i===23)L.push('2026-11-02 23:47 10.0.0.7 GET /coffre?note=FOURMI{grep_le_museau} 403')}return L.join('\n')})();
+function mkFS(){return{d:{home:{d:{oslo:{d:{'notes.txt':{f:'Ronde de 23h. Ne JAMAIS descendre au −7.\nLes journaux du serveur sont dans /var/log.'},'.fourmiliere':{d:{'indice.txt':{f:'Bravo : ls -a montre les fichiers cachés (ceux qui commencent par un point).\nLe nom de ce dossier est la réponse à la question 1.'}}},'coffre':{d:{'diamant.txt':{f:'FOURMI{chmod_plus_r}',lock:1}}}}}}},'var':{d:{log:{d:{'acces.log':{f:LOG}}}}},etc:{d:{'passwd':{f:'root:x:0:0:root:/root:/bin/bash\noslo:x:1000:1000:Oslo Mignon:/home/oslo:/bin/bash\nanonyme:x:1007:1007:???:/dev/null:/bin/false'}}}}}}
+TOOLS.term={html:'<div class="ac-term" id="ac-term" aria-live="polite"></div><div class="ac-term-in"><span>oslo@opale:<span id="ac-cwd">~</span>$</span><input id="ac-cmd" autocomplete="off" spellcheck="false" aria-label="Commande"></div>',
+ init:function(){var fs=mkFS(),cwd=['home','oslo'],hist=[],hi=0,out=document.getElementById('ac-term'),inp=document.getElementById('ac-cmd');
+  function pr(s,c){var d=document.createElement('div');if(c)d.className=c;d.innerHTML=s;out.appendChild(d);out.scrollTop=out.scrollHeight}
+  function res(p){var parts=p.startsWith('/')?[]:cwd.slice();(p.startsWith('~')?(parts=['home','oslo'],p.slice(1)):p).split('/').forEach(function(s){if(!s||s==='.')return;if(s==='..')parts.pop();else parts.push(s)});return parts}
+  function node(parts){var n=fs;for(var i=0;i<parts.length;i++){if(!n.d||!n.d[parts[i]])return null;n=n.d[parts[i]]}return n}
+  function path(){var p='/'+cwd.join('/');return p.replace(/^\/home\/oslo/,'~')||'/'}
+  pr('Bienvenue sur <b>opale-srv</b>. Tape <span class="pr">help</span> pour la liste des commandes.');
+  var C={help:function(){pr('ls [-a] [-l] [dossier] · cd dossier · pwd · cat fichier · grep [-i] mot fichier · chmod +r fichier · whoami · clear')},
+   pwd:function(){pr('/'+cwd.join('/'))},whoami:function(){pr('oslo')},clear:function(){out.innerHTML=''},
+   ls:function(a){var all=a.indexOf('-a')>=0||a.indexOf('-la')>=0||a.indexOf('-al')>=0,lg=a.indexOf('-l')>=0||a.indexOf('-la')>=0||a.indexOf('-al')>=0,t=a.filter(function(x){return x[0]!=='-'})[0],n=node(t?res(t):cwd);if(!n)return pr('ls: '+esc(t)+' : aucun fichier ou dossier','er');if(!n.d)return pr(esc(t));
+    var ks=Object.keys(n.d).filter(function(k){return all||k[0]!=='.'});if(all)ks=['.','..'].concat(ks);if(!ks.length)return;
+    if(lg)pr(ks.map(function(k){var c=n.d[k];var dir=!c||c.d;return(dir?'drwxr-xr-x':c.lock?'----------':'-rw-r--r--')+' oslo oslo '+(dir?'<span class="dir">'+k+'</span>':k)}).join('<br>'));else pr(ks.map(function(k){var c=n.d[k];return!c||c.d?'<span class="dir">'+k+'/</span>':k}).join('&nbsp;&nbsp;'))},
+   cd:function(a){if(!a[0]){cwd=['home','oslo'];return}var p=res(a[0]),n=node(p);if(!n)return pr('cd: '+esc(a[0])+' : aucun dossier de ce type','er');if(!n.d)return pr('cd: '+esc(a[0])+' : n’est pas un dossier','er');cwd=p},
+   cat:function(a){if(!a[0])return pr('cat: fichier manquant','er');var n=node(res(a[0]));if(!n)return pr('cat: '+esc(a[0])+' : aucun fichier','er');if(n.d)return pr('cat: '+esc(a[0])+' : est un dossier','er');if(n.lock)return pr('cat: '+esc(a[0])+' : Permission refusée','er');pr(esc(n.f).replace(/\n/g,'<br>'))},
+   grep:function(a){var i=a[0]==='-i';if(i)a=a.slice(1);if(a.length<2)return pr('usage : grep [-i] mot fichier','er');var n=node(res(a[1]));if(!n||n.d)return pr('grep: '+esc(a[1])+' : aucun fichier','er');if(n.lock)return pr('grep: '+esc(a[1])+' : Permission refusée','er');
+    var w=i?a[0].toLowerCase():a[0],L=n.f.split('\n').filter(function(l){return(i?l.toLowerCase():l).indexOf(w)>=0});pr(L.length?L.map(function(l){return esc(l)}).join('<br>'):'(aucune ligne trouvée)')},
+   chmod:function(a){if(a.length<2)return pr('usage : chmod +r fichier','er');var n=node(res(a[1]));if(!n)return pr('chmod: '+esc(a[1])+' : aucun fichier','er');if(/^(\+r|u\+r|a\+r|644|744|755|600|400|777)$/.test(a[0])){n.lock=0;pr('Droits modifiés : '+esc(a[1])+' est maintenant lisible.')}else pr('chmod: mode inconnu (essaie +r)','er')},
+   sudo:function(){pr('oslo n’est pas dans le fichier sudoers. Cet incident sera signalé au Fourmilier.','er')}};
+  inp.addEventListener('keydown',function(e){if(e.key==='ArrowUp'){if(hi>0)inp.value=hist[--hi];e.preventDefault();return}if(e.key==='ArrowDown'){inp.value=hi<hist.length-1?hist[++hi]:'';hi=Math.min(hi+1,hist.length);e.preventDefault();return}
+   if(e.key!=='Enter')return;var l=inp.value.trim();inp.value='';pr('<span class="pr">oslo@opale:'+path()+'$</span> '+esc(l));if(!l)return;hist.push(l);hi=hist.length;var p=l.split(/\s+/),f=C[p[0]];if(f)f(p.slice(1));else pr(esc(p[0])+' : commande introuvable','er');document.getElementById('ac-cwd').textContent=path()});
+  out.addEventListener('click',function(){inp.focus()})}};
+/* Mots de passe */
+var WL=['123456','motdepasse','azerty','soleil','fourmi','opale2024','loulou','fourmi2026','diamant','0007'];
+TOOLS.mdp={html:'<div class="ac-tools"><div class="ac-tool"><b>Hacheur et chronomètre</b><input id="ac-pw" placeholder="Tape un mot de passe (rien n’est envoyé)" autocomplete="off"><div class="out" id="ac-pw-o">…</div></div>'
+ +'<div class="ac-tool"><b>Démo du sel</b><div class="out" id="ac-salt-o">Tape un mot de passe à gauche.</div><div class="row2"><button type="button" class="mini" id="ac-salt">Nouveau sel</button></div></div>'
+ +'<div class="ac-tool"><b>Attaque par dictionnaire</b><div class="out">Cible : '+D.pwh.slice(0,20)+'…</div><div class="row2"><button type="button" class="mini" id="ac-atk">Lancer l’attaque</button></div><div class="out" id="ac-atk-o"></div></div></div>',
+ init:function(){var pw=document.getElementById('ac-pw'),salt=Math.random().toString(16).slice(2,10);
+  function dur(s){if(s<1)return'moins d’une seconde';var u=[[31557600*100,'siècles'],[31557600,'ans'],[86400,'jours'],[3600,'heures'],[60,'minutes'],[1,'secondes']];for(var i=0;i<u.length;i++)if(s>=u[i][0]){var v=s/u[i][0];return(v>1e6?'plus d’un million de':Math.round(v))+' '+u[i][1]}}
+  function upd(){var v=pw.value;if(!v){document.getElementById('ac-pw-o').textContent='…';return}var cs=(/[a-z]/.test(v)?26:0)+(/[A-Z]/.test(v)?26:0)+(/[0-9]/.test(v)?10:0)+(/[^a-zA-Z0-9]/.test(v)?33:0),comb=Math.pow(cs,v.length),inWL=WL.indexOf(v.toLowerCase())>=0;
+   document.getElementById('ac-pw-o').innerHTML='SHA-256 : '+sha256(v)+'\nLongueur : '+v.length+' · alphabet : '+cs+' signes\nCombinaisons : '+(comb>1e15?comb.toExponential(2):Math.round(comb).toLocaleString('fr-FR'))+'\nTemps (10 milliards d’essais/s) : '+(inWL?'instantané : il est dans le dictionnaire !':dur(comb/1e10));
+   document.getElementById('ac-salt-o').textContent='sel = '+salt+'\nSHA-256(sel + mdp) = '+sha256(salt+v)}
+  pw.addEventListener('input',upd);document.getElementById('ac-salt').onclick=function(){salt=Math.random().toString(16).slice(2,10);upd()};
+  document.getElementById('ac-atk').onclick=function(){var o=document.getElementById('ac-atk-o'),i=0;o.innerHTML='';var iv=setInterval(function(){if(i>=WL.length){clearInterval(iv);return}var w=WL[i++],hh=sha256(w),m=hh===D.pwh;o.innerHTML+=(m?'<b style="color:#3dff8f">✔ ':'✖ ')+w.padEnd(11)+' → '+hh.slice(0,16)+'…'+(m?' TROUVÉ !</b>':'')+'\n';if(m)clearInterval(iv)},260)}}};
+/* Phishing */
+var MAILS=[{f:'Résidence Opale &lt;syndic@residence-opale.fr&gt;',s:'Planning des rondes de novembre',b:'Bonjour Oslo, vous trouverez le planning des rondes sur l’intranet habituel : <a data-url="https://residence-opale.fr/planning">residence-opale.fr/planning</a>. Bonne nuit de travail.',ok:'leg',e:'Légitime : adresse cohérente, aucun mot de passe demandé, le lien mène bien au domaine affiché.'},
+ {f:'Banque Diamant &lt;securite@banque-diamant.fr.verif-compte.ru&gt;',s:'URGENT : votre compte sera bloqué sous 24 h',b:'Une activité suspecte a été détectée. Confirmez immédiatement vos identifiants ici : <a data-url="http://banque-diamant.fr.verif-compte.ru/login">www.banque-diamant.fr</a>, sinon votre compte sera supprimé.',ok:'phi',e:'Phishing : urgence inventée, et le vrai domaine est verif-compte.ru (c’est la fin de l’adresse qui compte). Le lien affiché ment.'},
+ {f:'Service informatique &lt;support@residence-0pale.fr&gt;',s:'Votre mot de passe expire aujourd’hui',b:'Pour conserver votre mot de passe actuel, saisissez-le sur <a data-url="http://residence-0pale.fr/garder-mdp">le portail de sécurité</a>.',ok:'phi',e:'Phishing : « 0pale » avec un zéro ! Et aucun service sérieux ne demande ton mot de passe actuel par e-mail.'},
+ {f:'Colis Express &lt;notifications@colis-express.fr&gt;',s:'Votre colis a été déposé à la loge',b:'Bonne nouvelle : votre colis n°FA-0007 a été remis au gardien de la Résidence Opale. Aucune action n’est nécessaire.',ok:'leg',e:'Légitime : pas de lien, pas de paiement, pas de demande d’information. Rien à voler ici.'}];
+TOOLS.phish={html:'<div id="ac-mails">'+MAILS.map(function(m,i){return '<div class="mail" id="ac-m'+i+'"><div class="mail-h"><b>De :</b> '+m.f+'<br><b>Objet :</b> '+m.s+'</div><div class="mail-b">'+m.b+'<div class="ac-url" id="ac-u'+i+'"></div></div><div class="mail-f"><button type="button" class="mini" data-mail="'+i+'" data-v="leg">✔ Légitime</button><button type="button" class="mini" data-mail="'+i+'" data-v="phi">🎣 Phishing</button><span class="exp" id="ac-e'+i+'"></span></div></div>'}).join('')+'</div><div class="ac-out" id="ac-ph-o"></div>',
+ init:function(){var ans={};root.querySelectorAll('.mail-b a').forEach(function(a,i){var show=function(){a.closest('.mail-b').querySelector('.ac-url').textContent='🔗 Ce lien mène vraiment à : '+a.dataset.url};a.addEventListener('mouseenter',show);a.addEventListener('focus',show);a.addEventListener('click',function(e){e.preventDefault();show()});a.tabIndex=0});
+  root.querySelectorAll('[data-mail]').forEach(function(b){b.onclick=function(){var i=+b.dataset.mail,m=MAILS[i],r=b.dataset.v===m.ok;ans[i]=r;var el=document.getElementById('ac-m'+i);el.className='mail '+(r?'bon':'faux');document.getElementById('ac-e'+i).textContent=(r?'✔ ':'✖ Raté. ')+m.e;
+   var all=MAILS.every(function(_,j){return ans[j]});document.getElementById('ac-ph-o').innerHTML=all?'🎉 Les 4 e-mails sont bien classés. Drapeau : <b style="color:#ffd23f">FOURMI{pas_de_clic}</b>':''}})}};
+/* Cryptographie */
+TOOLS.crypto={html:'<div class="ac-tools"><div class="ac-tool"><b>César</b><input id="ac-ces" value="'+D.ces+'"><div class="row2">Décalage <input type="range" id="ac-ces-k" min="0" max="25" value="0" style="flex:1"><span id="ac-ces-v">0</span></div><div class="out" id="ac-ces-o"></div></div>'
+ +'<div class="ac-tool"><b>Base64</b><input id="ac-b64"><div class="row2"><button type="button" class="mini" id="ac-b64-d">Décoder</button><button type="button" class="mini" id="ac-b64-e">Encoder</button></div><div class="out" id="ac-b64-o"></div></div>'
+ +'<div class="ac-tool"><b>Hexadécimal → texte</b><input id="ac-hex"><div class="row2"><button type="button" class="mini" id="ac-hex-d">Convertir</button></div><div class="out" id="ac-hex-o"></div></div>'
+ +'<div class="ac-tool"><b>Vigenère</b><input id="ac-vig" value="'+D.vig+'"><input id="ac-vig-k" placeholder="Clé" style="margin-top:6px"><div class="row2"><button type="button" class="mini" id="ac-vig-d">Déchiffrer</button></div><div class="out" id="ac-vig-o"></div></div></div>',
+ init:function(){var g=function(i){return document.getElementById(i)},sh=function(t,k){return t.replace(/[A-Za-z]/g,function(c){var b=c<'a'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+k+26)%26+b)})};
+  var ces=function(){var k=+g('ac-ces-k').value;g('ac-ces-v').textContent=k;g('ac-ces-o').textContent=sh(g('ac-ces').value,-k)};g('ac-ces-k').oninput=ces;g('ac-ces').oninput=ces;ces();
+  g('ac-b64-d').onclick=function(){try{g('ac-b64-o').textContent=decodeURIComponent(escape(atob(g('ac-b64').value.trim())))}catch(e){g('ac-b64-o').textContent='Ce n’est pas du Base64 valide.'}};
+  g('ac-b64-e').onclick=function(){g('ac-b64-o').textContent=btoa(unescape(encodeURIComponent(g('ac-b64').value)))};
+  g('ac-hex-d').onclick=function(){var h=g('ac-hex').value.replace(/[^0-9a-fA-F]/g,'');if(h.length%2){g('ac-hex-o').textContent='Nombre de chiffres impair.';return}var s='';for(var i=0;i<h.length;i+=2)s+=String.fromCharCode(parseInt(h.substr(i,2),16));g('ac-hex-o').textContent=s};
+  g('ac-vig-d').onclick=function(){var k=g('ac-vig-k').value.toUpperCase().replace(/[^A-Z]/g,'');if(!k){g('ac-vig-o').textContent='Entre une clé.';return}var j=0;g('ac-vig-o').textContent=g('ac-vig').value.toUpperCase().replace(/[A-Z]/g,function(c){return String.fromCharCode((c.charCodeAt(0)-65-(k.charCodeAt(j++%k.length)-65)+26)%26+65)})}}};
+/* Inspecteur */
+TOOLS.insp={html:'<div class="ac-tool" data-fragment="2/4 : ect3ur_"><b>Les 4 cachettes</b><div class="out">1. Code source de la page (Ctrl+U)\n2. Un attribut HTML de cette boîte (onglet Éléments)\n3. Stockage local du site (onglet Application ou Stockage)\n4. Console (onglet Console)</div></div>',
+ init:function(){try{localStorage.setItem('fa-frag3','3/4 : du_')}catch(e){}console.log('%c🐜 Académie du Fourmilier — fragment 4/4 : museau}','color:#ff3d9a;font-size:14px;font-weight:bold')}};
+/* Réseau */
+TOOLS.net={html:'<svg class="ac-net" viewBox="0 0 760 200" role="img" aria-label="Schéma : ton PC, la box, le DNS puis le serveur"><defs><marker id="ac-ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#b9a6d9"/></marker></defs>'
+ +[['💻','Ton PC','192.168.1.23',70],['📡','Ta box','192.168.1.1',260],['📖','DNS','opale.fr → 93.184.216.34',450],['🗄️','Serveur','93.184.216.34 : 443 (HTTPS)',650]].map(function(n){return '<g><circle cx="'+n[3]+'" cy="80" r="34" fill="#27194a" stroke="#ff3d9a" stroke-width="3"/><text x="'+n[3]+'" y="92" text-anchor="middle" font-size="30">'+n[0]+'</text><text x="'+n[3]+'" y="142" text-anchor="middle" fill="#ffd23f" font-family="Karla,sans-serif" font-weight="700" font-size="15">'+n[1]+'</text><text x="'+n[3]+'" y="164" text-anchor="middle" fill="#b9a6d9" font-family="monospace" font-size="12">'+n[2]+'</text></g>'}).join('')
+ +'<path d="M106 80H222M296 80H412M486 80H612" stroke="#b9a6d9" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ac-ar)" fill="none"/><circle r="7" fill="#3dff8f"><animateMotion dur="3s" repeatCount="indefinite" path="M106 80H612"/></circle></svg>'
+ +'<h4>Résultat du scan de 93.184.216.34</h4><pre class="ac-pre">$ scan --services 93.184.216.34\nPORT      ÉTAT    SERVICE   DÉTAIL\n21/tcp    ouvert  ftp       vsftpd 3.0 — connexion anonyme AUTORISÉE\n22/tcp    ouvert  ssh       OpenSSH 9.6\n80/tcp    ouvert  http      redirige vers https\n443/tcp   ouvert  https     certificat valide (opale.fr)\n3306/tcp  ouvert  mysql     base de données « coffre_diamants »\n8080/tcp  filtré  http-alt  —</pre>',init:function(){}};
+/* Logs */
+var AUTH=(function(){var L=[],t=0,fmt=function(s){var h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60;return('0'+h).slice(-2)+':'+('0'+m).slice(-2)+':'+('0'+x).slice(-2)},users=['root','admin','gardien','oslo','test'];
+ var push=function(s,m){L.push('Nov 03 '+fmt(s)+' opale-srv '+m)};push(2*3600+5,'sshd[811]: Accepted publickey for oslo from 10.0.0.12 port 50122 ssh2');push(2*3600+600,'CRON[902]: (root) CMD (sauvegarde.sh)');
+ for(var i=0;i<26;i++){t=3*3600+11*60+i*7;push(t,'sshd['+(1200+i)+']: Failed password for '+(i<6?users[i%5]:'gardien')+' from 185.220.101.7 port '+(40000+i*13)+' ssh2');if(i===9)push(t+3,'sshd[1300]: Failed password for oslo from 10.0.0.31 port 51000 ssh2');if(i===17)push(t+2,'nginx[77]: 10.0.0.12 GET /planning 200')}
+ push(3*3600+14*60+7,'sshd[1251]: Accepted password for gardien from 185.220.101.7 port 51122 ssh2');push(3*3600+14*60+30,'sudo: gardien : COMMAND=/bin/cat /opale/coffre/diamants.db');push(3*3600+16*60,'sshd[1251]: Disconnected from user gardien 185.220.101.7');push(4*3600+2,'CRON[990]: (root) CMD (rotation-logs.sh)');return L})();
+TOOLS.logs={html:'<input class="flt" id="ac-flt" placeholder="Filtrer les lignes (ex. : Failed, Accepted, 185.)" autocomplete="off"><div class="ac-url" id="ac-flt-n"></div><pre class="ac-pre" id="ac-log"></pre>',
+ init:function(){var f=document.getElementById('ac-flt'),o=document.getElementById('ac-log'),n=document.getElementById('ac-flt-n');function up(){var q=f.value.trim().toLowerCase(),L=AUTH.filter(function(l){return!q||l.toLowerCase().indexOf(q)>=0});n.textContent=L.length+' ligne(s) sur '+AUTH.length;o.innerHTML=L.map(function(l){var e=esc(l);return q?e.replace(new RegExp(esc(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),function(m){return '<mark>'+m+'</mark>'}):e}).join('\n')}f.oninput=up;up()}};
+/* Stéganographie */
+TOOLS.steg={html:'<div class="ac-steg"><canvas id="ac-cv" width="480" height="270"></canvas><div class="ac-tool" style="flex:1 1 220px"><b>Outils</b><div class="row2"><button type="button" class="mini" id="ac-exif">Lire les métadonnées</button><button type="button" class="mini" id="ac-orig">Image normale</button></div><div class="row2">Canal <select id="ac-ch"><option value="0">Rouge</option><option value="1">Vert</option><option value="2">Bleu</option></select> Bit <input type="range" id="ac-bit" min="0" max="7" value="7" style="flex:1"><span id="ac-bit-v">7</span></div><div class="row2"><button type="button" class="mini" id="ac-plan">Afficher ce plan de bits</button></div><div class="out" id="ac-st-o">Choisis un canal et un bit, puis affiche le plan.</div></div></div>',
+ init:function(){var cv=document.getElementById('ac-cv'),g=cv.getContext('2d',{willReadFrequently:true}),W=480,H=270;
+  var sky=g.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#0b0620');sky.addColorStop(1,'#3a1d5c');g.fillStyle=sky;g.fillRect(0,0,W,H);g.fillStyle='#fff3c4';g.beginPath();g.arc(400,55,26,0,7);g.fill();
+  for(var i=0;i<60;i++){g.fillStyle='rgba(255,255,255,'+(.3+Math.random()*.6)+')';g.fillRect(Math.random()*W,Math.random()*H*.5,1.5,1.5)}
+  g.fillStyle='#120a22';g.fillRect(150,80,180,190);for(var r=0;r<5;r++)for(var c=0;c<5;c++){g.fillStyle=Math.random()<.3?'#ffd23f':'#1f1436';g.fillRect(165+c*33,95+r*34,20,22)}
+  g.fillStyle='#ffd23f';g.font='bold 14px Bungee,Impact,sans-serif';g.textAlign='center';g.fillText('RÉSIDENCE OPALE',240,74);g.fillStyle='#07040d';g.fillRect(0,250,W,20);
+  var img=g.getImageData(0,0,W,H),m=document.createElement('canvas');m.width=W;m.height=H;var mg=m.getContext('2d');mg.fillStyle='#000';mg.fillRect(0,0,W,H);mg.fillStyle='#fff';mg.font='bold 30px monospace';mg.textAlign='center';mg.fillText('FOURMI{les_pixels',W/2,120);mg.fillText('_parlent}',W/2,160);
+  var md=mg.getImageData(0,0,W,H).data,d=img.data;for(var p=0;p<d.length;p+=4){d[p]=(d[p]&254)|(md[p]>127?1:0);d[p+3]=255}g.putImageData(img,0,0);var orig=g.getImageData(0,0,W,H);
+  var bit=document.getElementById('ac-bit');bit.oninput=function(){document.getElementById('ac-bit-v').textContent=bit.value};
+  document.getElementById('ac-orig').onclick=function(){g.putImageData(orig,0,0)};
+  document.getElementById('ac-plan').onclick=function(){var ch=+document.getElementById('ac-ch').value,b=+bit.value,o=g.createImageData(W,H),s=orig.data,t=o.data;for(var p=0;p<s.length;p+=4){var v=(s[p+ch]>>b)&1?255:0;t[p]=t[p+1]=t[p+2]=v;t[p+3]=255}g.putImageData(o,0,0);document.getElementById('ac-st-o').textContent='Plan de bits : canal '+['rouge','vert','bleu'][ch]+', bit '+b+(b===0?' (poids faible)':b===7?' (poids fort)':'')+'.'};
+  document.getElementById('ac-exif').onclick=function(){document.getElementById('ac-st-o').textContent='Fichier : opale_nuit.png\nAuteur : A. Anonyme\nAppareil : caméra de surveillance n°7\nDate : 13/01/1999 02:31\nGPS : 48.8566 N, 2.3522 E\nCommentaire : « tout est dans le plus petit bit »'}}};
+/* OSINT */
+var POSTS=[['12 mars','Joyeux anniversaire à Moustache 🐱, mon tout premier animal ! 17 ans déjà, le doyen des chats de la résidence.',48],['2 septembre','De retour à Roubaix, ma ville natale, pour la braderie. Rien ne vaut les moules-frites de chez nous ❤️',61],['18 octobre','Encore un nouveau mot de passe au bureau… je vais l’oublier. Heureusement qu’il y a les questions secrètes 😅',12],['31 octobre','Ma devise de syndic : « Ce qui se passe au sous-sol reste au sous-sol. »',7],['2 novembre','Ce soir, un nouveau gardien de nuit commence à la résidence. J’espère qu’il tiendra plus longtemps que les autres.',3]];
+TOOLS.osint={html:'<div class="ac-soc"><div class="ac-soc-h"><div class="ac-soc-av" aria-hidden="true">JV</div><div><b>Jacqueline Vasseur</b><br><small>@jacky.opale · Syndic de la Résidence Opale depuis 1997 · 312 abonnés · profil public</small></div></div>'+POSTS.map(function(p){return '<div class="ac-post"><small>'+p[0]+'</small><p>'+p[1]+'</p><span>❤ '+p[2]+'</span></div>'}).join('')+'</div>'
+ +'<div class="ac-tool" style="margin-top:12px"><b>🔐 Mot de passe oublié · compte « jacky.opale »</b><label class="ac-lab">Nom de votre premier animal<input id="ac-q1" autocomplete="off" spellcheck="false"></label><label class="ac-lab">Votre ville de naissance<input id="ac-q2" autocomplete="off" spellcheck="false"></label><div class="row2"><button type="button" class="mini" id="ac-rec">Récupérer le compte</button></div><div class="out" id="ac-rec-o"></div></div>',
+ init:function(){document.getElementById('ac-rec').onclick=function(){var a=document.getElementById('ac-q1').value,b=document.getElementById('ac-q2').value,o=document.getElementById('ac-rec-o');if(good('o1',a)&&good('o2',b))o.innerHTML='✔ Compte récupéré, nouveau mot de passe envoyé… Drapeau : <b style="color:#ffd23f">FOURMI{osint_moustache}</b>';else o.textContent='✖ Réponses incorrectes. Fouille encore son profil.'}}};
+/* Pare-feu */
+var PKTS=[['185.220.101.7',443,0,'attaquant'],['185.220.101.7',22,0,'attaquant'],['92.184.10.5',443,1,'client'],['92.184.10.5',80,1,'client'],['10.0.0.12',22,1,'admin'],['45.33.12.9',3306,0,'scanner'],['45.33.12.9',22,0,'scanner']];
+TOOLS.fw={html:'<div class="ac-fw"><div class="ac-scroll"><table class="ac-rules"><thead><tr><th>#</th><th>Action</th><th>IP source</th><th>Port</th><th></th></tr></thead><tbody id="ac-fw-b"></tbody></table></div>'
+ +'<div class="row2"><button type="button" class="mini" id="ac-fw-add">+ Ajouter une règle</button><label class="ac-lab2">Politique par défaut <select id="ac-fw-def"><option value="1">Autoriser</option><option value="0">Bloquer</option></select></label></div>'
+ +'<p class="ac-url">IP source : une adresse précise, ou <code>*</code> pour toutes. Les règles sont lues de haut en bas.</p><div class="row2"><button type="button" class="btn" style="padding:8px 18px" id="ac-fw-run">Tester le trafic</button></div><div id="ac-fw-o"></div></div>',
+ init:function(){var rules=[{a:1,ip:'*',port:'*'}],tb=document.getElementById('ac-fw-b'),PORTS=['*','22','80','443','3306'];
+  function paint(){tb.innerHTML=rules.length?rules.map(function(r,i){return '<tr><td>'+(i+1)+'</td><td><select data-i="'+i+'" data-k="a" aria-label="Action"><option value="1"'+(r.a?' selected':'')+'>Autoriser</option><option value="0"'+(r.a?'':' selected')+'>Bloquer</option></select></td><td><input data-i="'+i+'" data-k="ip" value="'+esc(r.ip)+'" spellcheck="false" aria-label="IP source"></td><td><select data-i="'+i+'" data-k="port" aria-label="Port">'+PORTS.map(function(p){return '<option'+(String(r.port)===p?' selected':'')+'>'+p+'</option>'}).join('')+'</select></td><td class="ac-act"><button type="button" class="mini" data-up="'+i+'" title="Monter" aria-label="Monter la règle">↑</button><button type="button" class="mini" data-del="'+i+'" title="Supprimer" aria-label="Supprimer la règle">✖</button></td></tr>'}).join(''):'<tr><td colspan="5">Aucune règle : seule la politique par défaut s’applique.</td></tr>'}
+  function upd(e){var t=e.target,i=+t.dataset.i;if(isNaN(i)||!rules[i])return;var k=t.dataset.k;rules[i][k]=k==='a'?+t.value:t.value.trim()}
+  tb.addEventListener('input',upd);tb.addEventListener('change',upd);
+  tb.addEventListener('click',function(e){var u=e.target.closest('[data-up]'),d=e.target.closest('[data-del]');if(u){var i=+u.dataset.up;if(i>0){var x=rules[i];rules[i]=rules[i-1];rules[i-1]=x;paint()}}if(d){rules.splice(+d.dataset.del,1);paint()}});
+  document.getElementById('ac-fw-add').onclick=function(){rules.push({a:0,ip:'*',port:'*'});paint()};
+  document.getElementById('ac-fw-run').onclick=function(){var def=+document.getElementById('ac-fw-def').value,all=true;
+   var rows=PKTS.map(function(p){var dec=def,who='défaut';for(var i=0;i<rules.length;i++){var r=rules[i],ip=(r.ip||'*').toLowerCase();if(ip==='any'||ip==='tout')ip='*';if((ip==='*'||ip===p[0])&&(r.port==='*'||+r.port===p[1])){dec=r.a;who='règle '+(i+1);break}}var ok=dec===p[2];if(!ok)all=false;
+    return '<tr class="'+(ok?'okr':'kor')+'"><td>'+p[0]+' <small>('+p[3]+')</small></td><td>'+p[1]+'</td><td>'+(dec?'✅ passe':'⛔ bloqué')+' <small>('+who+')</small></td><td>'+(ok?'✔':'✖ attendu : '+(p[2]?'passe':'bloqué'))+'</td></tr>'});
+   document.getElementById('ac-fw-o').innerHTML='<div class="ac-scroll"><table class="ac-rules ac-res"><thead><tr><th>Source</th><th>Port</th><th>Décision</th><th>Correct ?</th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div>'+(all?'<p class="ac-win">🎉 Pare-feu parfait ! Drapeau : <b>FOURMI{regle_par_regle}</b></p>':'<p class="ac-url">Ajuste tes règles (l’ordre compte !) et relance le test.</p>')};
+  paint()}};
+/* ---------- ouverture d’une salle ---------- */
+function openRoom(id){var r=ROOMS.filter(function(q){return q.id===id})[0],el=document.getElementById('ac-room');cur=id;paintGrid();el.hidden=false;
+ el.innerHTML='<h3>'+r.ic+' '+r.n+'</h3><span class="ac-lvl l'+r.lvl+'">'+['','Débutant','Intermédiaire','Avancé'][r.lvl]+'</span><div class="lecon">📘 '+r.lecon+'</div><h4>Outils</h4>'+TOOLS[r.id].html+'<h4>Questions</h4>'+r.tasks.map(taskHtml).join('')+'<div style="margin-top:14px"><button type="button" class="mini" data-close>Fermer la salle</button></div>';
+ TOOLS[r.id].init();el.scrollIntoView({behavior:'smooth',block:'start'})}
+root.addEventListener('click',function(e){var t=e.target.closest('[data-room]');if(t){openRoom(t.dataset.room);return}
+ var f=e.target.closest('[data-f]');if(f){filtre=f.dataset.f;root.querySelectorAll('[data-f]').forEach(function(b){b.classList.toggle('on',b===f)});paintGrid();return}
+ var c=e.target.closest('[data-check]');if(c){check(c.dataset.check);return}
+ var h=e.target.closest('[data-hint]');if(h){var k=h.dataset.hint;st.hint[k]=1;save();document.getElementById('ac-t-'+k).outerHTML=taskHtml(TASKS[k]);return}
+ if(e.target.closest('[data-close]')){var el=document.getElementById('ac-room');el.hidden=true;el.innerHTML='';cur=null;paintGrid();document.getElementById('ac-grid').scrollIntoView({behavior:'smooth',block:'center'});return}
+ if(e.target.closest('#ac-wk-b'))weekCheck()});
+root.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.in){check(e.target.dataset.in)}if(e.key==='Enter'&&e.target.id==='ac-wk-i')weekCheck()});
+/* ---------- défi de la semaine ---------- */
+var WEEK=[{q:'Décode ce binaire : <code>'+D.bin+'</code>'},{q:'ROT13 (César de 13) : <code>'+D.rot+'</code>'},{q:'Sur quel port écoute SSH par défaut ?'},{q:'Base64 : <code>'+D.b64w+'</code>'},{q:'Combien de bits dans un octet ?'},{q:'Hexadécimal : <code>'+D.hexw+'</code>'}];
+function weekNo(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),dn=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-dn);var y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return t.getUTCFullYear()+'-'+Math.ceil(((t-y)/864e5+1)/7)}
+function weekIdx(){var w=weekNo(new Date());return(+w.split('-')[1]+ +w.split('-')[0])%WEEK.length}
+function paintWeek(){var w=weekNo(new Date()),i=weekIdx(),done=st.week[w]!==undefined;
+ document.getElementById('ac-hebdo').innerHTML='<h3>📅 Défi de la semaine</h3><p>'+WEEK[i].q+' <small style="color:var(--brume)">(50 pts)</small></p>'+(done?'<div class="retour bon">✔ Défi réussi cette semaine !</div>':'<div class="flagrow"><input id="ac-wk-i" placeholder="Ta réponse" autocomplete="off"><button type="button" class="btn" style="padding:8px 18px" id="ac-wk-b">Valider</button></div><div class="retour" id="ac-wk-r"></div>')+'<p style="margin-top:8px;color:var(--brume)">Nouveau défi dans <span class="ac-cd" id="ac-cd"></span></p>'}
+function weekCheck(){var i=weekIdx(),v=document.getElementById('ac-wk-i').value;if(good('w'+i,v)){st.week[weekNo(new Date())]=50;save();toast('📅 Défi de la semaine réussi : +50 points');paintWeek();paintAll()}else{var r=document.getElementById('ac-wk-r');r.textContent='✖ Pas tout à fait.';r.className='retour mauvais'}}
+var lastW=weekNo(new Date());
+function tickCd(){var n=new Date(),nx=new Date(n);nx.setHours(0,0,0,0);nx.setDate(nx.getDate()+((8-(n.getDay()||7))%7||7));var s=Math.max(0,(nx-n)/1000|0),el=document.getElementById('ac-cd');
+ if(weekNo(n)!==lastW){lastW=weekNo(n);paintWeek()}if(el)el.textContent=Math.floor(s/86400)+' j '+('0'+Math.floor(s/3600)%24).slice(-2)+' h '+('0'+Math.floor(s/60)%60).slice(-2)+' min '+('0'+s%60).slice(-2)+' s'}
+window.faAcad={points:points,rank:rank,done:nDone,total:TOTAL,rooms:function(){return ROOMS.filter(function(r){return rDone(r.id)}).length},nRooms:ROOMS.length};
+paintAll();paintWeek();tickCd();setInterval(tickCd,1000);
+})();
+
+</script>
+<script>
+/* Lancement du jeu à la demande + plein écran */
+(function(){
+  var f = document.getElementById('jeu-frame'), p = document.getElementById('jeu-poster'), c = document.getElementById('cadre-jeu');
+  if(!f || !p || !c) return;
+  function charger(){
+    if(!f.getAttribute('src')){
+      f.addEventListener('load', function(){ try{ f.focus(); f.contentWindow.focus(); }catch(e){} }, {once:true});
+      f.src = 'jeu-fourmilier-ameliore.html';
+    }
+    f.hidden = false; p.hidden = true;
+  }
+  document.getElementById('jeu-go').addEventListener('click', charger);
+  document.getElementById('jeu-fs').addEventListener('click', function(){
+    charger();
+    var rq = c.requestFullscreen || c.webkitRequestFullscreen;
+    if(rq){ try{ var r = rq.call(c); if(r && r.catch) r.catch(function(){}); }catch(e){} }
+    try{ f.focus(); }catch(e){}
+  });
+  document.querySelectorAll('a[href="#jouer"]').forEach(function(a){ a.addEventListener('click', function(){ setTimeout(function(){ try{ document.getElementById('jeu-go').focus({preventScroll:true}); }catch(e){} }, 600); }); });
+})();
+/* Tableau de chasse : progression réelle */
+(function(){
+  var $ = function(i){ return document.getElementById(i); };
+  if(!$('d-ctf')) return;
+  var G = null;
+  function ls(k, d){ try{ var v = localStorage.getItem(k); return v === null ? d : v; }catch(e){ return d; } }
+  function liste(k){ try{ return JSON.parse(ls(k, '[]')) || []; }catch(e){ return []; } }
+  function jeu(){
+    if(G) return G;
+    var best = +ls('fa-best', 0) || 0;
+    return {best: best, rank: '', ends: liste('fa-ends').length, endsT: 5, eggs: liste('fa-eggs').length, eggsT: 10, pages: liste('fa-pages').length, pagesT: 8, neuf: liste('fa-neuf').length};
+  }
+  function peindre(){
+    var c = {}; try{ c = JSON.parse(ls('fa-ctf', '{}')) || {}; }catch(e){}
+    var nc = Object.keys(c.ok || {}).length;
+    $('d-ctf').textContent = nc + '/7';
+    var cs = $('ctf-score'); $('d-ctfs').textContent = cs ? cs.textContent : '0';
+    var A = window.faAcad, pa = 0;
+    if(A){ var r = A.rank(); $('d-aca').textContent = A.points(); $('d-acr').textContent = r[2]; $('d-acr-i').textContent = r[1]; pa = A.done() / A.total; }
+    var g = jeu();
+    $('d-best').textContent = g.best ? g.best : '—';
+    $('d-rank').textContent = g.best ? (g.rank || 'record personnel') : 'pas encore joué';
+    $('d-ends').textContent = g.ends + '/' + g.endsT; $('d-eggs').textContent = g.eggs + '/' + g.eggsT;
+    $('d-lore').textContent = g.pages + '/' + g.pagesT; $('d-neuf').textContent = g.neuf + '/9';
+    var parts = [nc / 7, pa, g.ends / g.endsT, g.pages / g.pagesT, g.neuf / 9];
+    var pc = Math.round(parts.reduce(function(a, b){ return a + Math.min(1, b); }, 0) / parts.length * 100);
+    $('d-glob').style.width = pc + '%'; $('d-globt').textContent = pc + ' % du Fourmilier Anonyme exploré';
+  }
+  addEventListener('message', function(ev){
+    var f = document.getElementById('jeu-frame');
+    if(!f || ev.source !== f.contentWindow || !ev.data || ev.data.type !== 'fourmilier-game-stats') return;
+    G = ev.data; peindre();
+  });
+  document.addEventListener('fa-progress', function(){ setTimeout(peindre, 30); });
+  addEventListener('storage', peindre);
+  peindre();
+})();
+/* Navigation : rubrique en cours + bouton « haut » */
+(function(){
+  var liens = {}; document.querySelectorAll('.nav a[href^="#"]').forEach(function(a){ var id = a.getAttribute('href').slice(1); if(id) liens[id] = a; });
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ var a = liens[e.target.id]; if(!a) return; if(e.isIntersecting){ document.querySelectorAll('.nav a.on').forEach(function(x){ x.classList.remove('on'); }); a.classList.add('on'); } }); }, {rootMargin: '-45% 0px -50% 0px'});
+    Object.keys(liens).forEach(function(id){ var el = document.getElementById(id); if(el) io.observe(el); });
+  }
+  var haut = document.getElementById('haut');
+  if(haut){
+    var t = false;
+    addEventListener('scroll', function(){ if(t) return; t = true; requestAnimationFrame(function(){ haut.hidden = scrollY < 700; t = false; }); }, {passive: true});
+    haut.addEventListener('click', function(){ scrollTo({top: 0, behavior: 'smooth'}); });
+  }
+})();
+</script>
+</body>
+</html>
