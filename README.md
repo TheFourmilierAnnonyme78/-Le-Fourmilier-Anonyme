@@ -31,11 +31,11 @@ Tout tient en quelques fichiers HTML : pas d’installation, pas de serveur, pas
 ### 🌙 Nuit blanche, le jeu
 Tu es **Oslo Mignon**, nouveau gardien de nuit à la Résidence Opale. Ton père, Maurice, a disparu dans cet immeuble il y a vingt-huit ans. Ce soir, quelque chose renifle dans les couloirs.
 
-- Horreur en 3D (three.js) sur **4 étages** générés aléatoirement.
+- Horreur en 3D (three.js) sur **5 étages** générés aléatoirement, chacun avec son ambiance : Hall, Bureaux, Cuisine, Sous-sol… et le toit, dehors, la nuit, sous la pluie.
 - **3 fourmiliers** aux comportements différents : l’un te traque, l’autre surgit pour t’observer, le dernier garde les clés.
-- Armes, munitions, rechargement, lampe torche, casiers pour se cacher, boutique et casino (roulette, machine à sous).
+- Armes avec balles visibles et impacts sur les murs, rechargement, lampe torche (sans piles en Facile), casiers pour se cacher, boutique avec objets fun et casino (roulette, machine à sous).
 - Une histoire qui se dévoile en avançant : carnet de Maurice, pages cachées, badges des Neuf, bestiaire.
-- **5 fins**, cinématiques, easter eggs et un monde secret.
+- **6 fins**, dont une cachée derrière la cellule 0007, avec leurs cinématiques, des easter eggs et un monde secret.
 - Jouable au clavier et à la souris, mais aussi sur **tablette et téléphone**.
 
 ---
@@ -74,7 +74,7 @@ Le jeu télécharge son moteur 3D au lancement : il faut une connexion Internet 
 | Siffler (dès l’étage 2) | G |
 | Pause | Échap |
 
-Les touches se modifient dans **Réglages**. Les codes secrets se tapent dans le menu pause.
+Les touches se modifient dans **Réglages**. Les codes secrets se tapent dans le menu pause (essaie `hareng`… ou `fin` pour choisir ta fin).
 
 Sur écran tactile : pavé à gauche pour bouger, glisser sur l’écran pour regarder, boutons d’action à droite.
 

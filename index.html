@@ -427,7 +427,7 @@ footer p{margin:6px 0}footer .ver{font-size:.82rem;opacity:.8}
   <div class="cadre" id="cadre-jeu">
     <div class="poster" id="jeu-poster">
       <div class="poster-yeux" aria-hidden="true"><i></i><i></i></div>
-      <p class="poster-k">Horreur en 3D · 4 étages · 5 fins</p>
+      <p class="poster-k">Horreur en 3D · 5 étages · 6 fins</p>
       <h3>Nuit blanche</h3>
       <p class="poster-p">Oslo Mignon commence son premier service de gardien de nuit. Son père a disparu ici il y a vingt-huit ans.</p>
       <button class="btn" id="jeu-go" type="button">▶ Lancer le jeu</button>
@@ -438,16 +438,17 @@ footer p{margin:6px 0}footer .ver{font-size:.82rem;opacity:.8}
   <div class="jeu-bar"><button class="mini" id="jeu-fs" type="button">⛶ Plein écran</button><a class="mini" href="jeu-fourmilier-ameliore.html" target="_blank" rel="noopener">Ouvrir dans un nouvel onglet</a></div>
   <p class="jeu-note">Jeu en 3D : ZQSD, WASD ou flèches pour bouger (touches et qualité graphique réglables dans le menu « Réglages »), souris pour regarder, clic pour attaquer/tirer, E pour interagir (boutique, casiers, ventilations), R pour recharger, L pour la lampe torche, Espace pour sauter, I pour l’inventaire, G pour siffler (dès l’étage 2). Sur tablette ou téléphone : pavé à gauche, glisser pour regarder, boutons d’action à droite.</p>
   <div class="nouveautes" aria-label="Nouveautés de la mise à jour">
-    <h3>Mise à jour du 4 novembre 2026</h3>
+    <h3>Mise à jour du 5 novembre 2026</h3>
     <ul>
-      <li><b>Le sifflet de Maurice</b> (touche G, dès l’étage 2) : Anonyme reconnaît ce son, se fige… puis s’éloigne. Mais il s’en souvient, l’effet faiblit, et le Colosse déteste être réveillé.</li>
-      <li><b>Les badges des Neuf</b> : les badges de l’équipe de nuit du sous-sol sont cachés dans l’immeuble, chacun avec ses derniers mots. Réunis-les tous pour découvrir un dixième badge.</li>
-      <li><b>Documents</b> dans l’inventaire pour relire les pages et les badges trouvés (gardés d’une partie à l’autre), et <b>Réessayer l’étage</b> après une mort au lieu de tout recommencer.</li>
-      <li>Un champ pour taper les <b>codes secrets</b> dans le menu pause (fini la lampe qui s’allume en tapant un code) et le jeu devient <b>jouable au tactile</b> : glisser pour regarder, boutons d’action.</li>
-      <li>Corrections : le Fourmilier ne revient plus droit sur toi juste après avoir disparu, et le site affiche maintenant ta vraie progression (record, fins, pages, badges).</li>
+      <li><b>Un 5e étage : le toit de l’immeuble</b>, dehors, la nuit, sous la pluie, avec la ville tout autour et l’orage au loin. Derrière une porte en métal, la <b>cellule 0007</b>. Quelqu’un y frappe trois coups. Trouve le code… et découvre la <b>6e fin</b>, avec le père d’Oslo.</li>
+      <li><b>Chaque étage a sa propre ambiance</b> : le néon rose reste au Hall (avec une moquette au sol), puis lumières froides aux Bureaux, verdâtres à la Cuisine, orangées au Sous-sol, et le toit dehors sous la pluie. Béton brut au lieu des briques multicolores, et des <b>fenêtres sur la nuit</b> où l’on voit la pluie et les éclairs.</li>
+      <li><b>Affiches réalistes</b> et dix modèles différents : avis de recherche, règlement intérieur, photos punaisées, dessin d’enfant, affiche déchirée…</li>
+      <li><b>Combat refait</b> : on voit partir les balles, les impacts restent sur les murs, la batte a une vraie animation d’élan avec des clous, et les mains sont plus réalistes.</li>
+      <li><b>Cinématiques plus sobres</b> (grain de film, caméra qui respire, titres et dessins plus réalistes), <b>objets fun</b> au Recel (canard leurre, lampe disco, carton de déguisement, boîte à musique…), lampe sans piles en Facile et piles plus capricieuses en Cauchemar, et deux nouveaux codes secrets : <b>hareng</b> et <b>fin</b>.</li>
     </ul>
-    <details class="histo"><summary>Historique des mises à jour (18)</summary>
+    <details class="histo"><summary>Historique des mises à jour (19)</summary>
     <ul>
+      <li>Le sifflet de Maurice (G, dès l’étage 2), les badges des Neuf à retrouver, les documents à relire dans l’inventaire, « Réessayer l’étage » après une mort, un champ pour les codes secrets dans le menu pause et le jeu jouable au tactile.</li>
       <li>Début plus doux : un temps de répit à chaque étage, l’objectif toujours affiché (la clé, puis la porte), un mini-guide en 4 bulles après l’intro… et un mur fissuré quelque part, pour ceux qui cherchent bien.</li>
       <li>Trois fourmiliers, trois rôles : Anonyme le Chasseur ne quitte jamais l’étage, Lumière la Pâle surgit, te fixe et s’évapore, et le Colosse garde la clé à partir de l’étage 3. Leur histoire se débloque dans le nouveau Bestiaire. Boutique refaite avec une vraie roulette.</li>
       <li>Compatibilité Firefox, Chrome et Edge : moteur 3D chargé depuis plusieurs serveurs de secours, souris mieux gérée, et un message clair s’affiche si le navigateur bloque la 3D au lieu d’un écran qui ne répond pas.</li>
@@ -1443,7 +1444,7 @@ paintAll();paintWeek();tickCd();setInterval(tickCd,1000);
   function jeu(){
     if(G) return G;
     var best = +ls('fa-best', 0) || 0;
-    return {best: best, rank: '', ends: liste('fa-ends').length, endsT: 5, eggs: liste('fa-eggs').length, eggsT: 10, pages: liste('fa-pages').length, pagesT: 8, neuf: liste('fa-neuf').length};
+    return {best: best, rank: '', ends: liste('fa-ends').length, endsT: 6, eggs: liste('fa-eggs').length, eggsT: 10, pages: liste('fa-pages').length, pagesT: 10, neuf: liste('fa-neuf').length};
   }
   function peindre(){
     var c = {}; try{ c = JSON.parse(ls('fa-ctf', '{}')) || {}; }catch(e){}
